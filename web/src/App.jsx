@@ -131,10 +131,19 @@ function Audit({ onDone }) {
   const [err, setErr] = useState(null)
   const openSSE = useSSE()
 
+  // Accept whatever a human would paste — a full URL, a clone URL, or owner/name —
+  // and reduce it to the owner/name the API needs, without rewriting what they typed.
+  const slug = (s) => s.trim()
+    .replace(/^(https?:\/\/)?(www\.)?github\.com\//i, '')
+    .replace(/\.git$/i, '')
+    .replace(/[?#].*$/, '')
+    .replace(/^\/+|\/+$/g, '')
+    .split('/').slice(0, 2).join('/')
+
   const run = (e) => {
     e?.preventDefault()
-    const r = repo.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '')
-    if (!r.includes('/')) return
+    const r = slug(repo)
+    if (!/^[\w.-]+\/[\w.-]+$/.test(r)) return
     setRows([]); setSkipped([]); setDone(null); setErr(null); setRunning(true)
     openSSE(`/api/audit?repo=${encodeURIComponent(r)}`, (d) => {
       if (d.type === 'checking') setChecking(d.lib)
@@ -155,24 +164,19 @@ function Audit({ onDone }) {
       <Head n="00" title="Audit a repository"
             sub="Type any public GitHub repo. Mitos searches inside it for vendored copies of libraries with known security fixes, then reads the bytes of anything it finds to decide whether the fix is present." />
       <form className="auditbar" onSubmit={run}>
-        <input value={repo} placeholder="sphair/ClanLib" spellCheck="false" autoCapitalize="off"
-               autoComplete="off" autoFocus
-               onChange={e => setRepo(
-                 e.target.value
-                   .replace(/^\s*(https?:\/\/)?(www\.)?github\.com\//i, '')  // paste a full URL
-                   .replace(/\.git$/i, '')                                   // or a clone URL
-                   .replace(/^\/+/, '')
-                   .trimStart()
-               )} />
-        <button className={`run ${running ? 'busy' : ''}`} disabled={running || !repo.includes('/')}>
+        <input value={repo} placeholder="https://github.com/sphair/ClanLib" spellCheck="false"
+               autoCapitalize="off" autoComplete="off" autoFocus
+               onChange={e => setRepo(e.target.value)} />
+        <button className={`run ${running ? 'busy' : ''}`}
+                disabled={running || !/^[\w.-]+\/[\w.-]+$/.test(slug(repo))}>
           {running ? 'auditing…' : 'audit'}
         </button>
       </form>
       <div className="ab-hint">
         paste any repo or URL · try{' '}
-        <button className="lnk" type="button" onClick={() => setRepo('sphair/ClanLib')}>sphair/ClanLib</button>
-        {' · '}<button className="lnk" type="button" onClick={() => setRepo('micknoise/Maximilian')}>micknoise/Maximilian</button>
-        {' · '}<button className="lnk" type="button" onClick={() => setRepo('icculus/sdlamp')}>icculus/sdlamp</button>
+        <button className="lnk" type="button" onClick={() => setRepo('https://github.com/sphair/ClanLib')}>sphair/ClanLib</button>
+        {' · '}<button className="lnk" type="button" onClick={() => setRepo('https://github.com/micknoise/Maximilian')}>micknoise/Maximilian</button>
+        {' · '}<button className="lnk" type="button" onClick={() => setRepo('https://github.com/icculus/sdlamp')}>icculus/sdlamp</button>
       </div>
 
       {checking && <div className="checking mono">scanning for {checking}…</div>}
