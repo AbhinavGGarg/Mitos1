@@ -366,3 +366,13 @@ a.card:hover{border-color:var(--line2);transform:translateX(2px)}
 .watch-cta{margin-bottom:14px;justify-content:space-between}
 .watch-cta span{font-size:13.5px;color:var(--dim)}
 .watch-cta b{display:inline;color:var(--fg);font-size:13px}
+
+/* ── honesty markers + failure surfacing ── */
+.illus{font-family:var(--sans);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--warn);background:var(--warn-bg);border:1px solid rgba(229,181,63,.3);
+  padding:3px 7px;border-radius:4px;margin-left:9px;font-weight:600}
+.illus-note{font-family:var(--sans);font-size:11px;letter-spacing:0;text-transform:none;
+  font-weight:400;color:var(--faint);margin-top:7px;line-height:1.55}
+.errbox{margin-top:18px;background:var(--bad-bg);border:1px solid var(--bad-line);
+  border-radius:var(--rs);padding:16px 20px;font-size:13.5px;color:var(--dim);line-height:1.6}
+.errbox b{color:var(--bad);margin-right:6px}

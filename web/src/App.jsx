@@ -128,19 +128,24 @@ function Audit({ onDone }) {
   const [checking, setChecking] = useState(null)
   const [running, setRunning] = useState(false)
   const [done, setDone] = useState(null)
+  const [err, setErr] = useState(null)
   const openSSE = useSSE()
 
   const run = (e) => {
     e?.preventDefault()
     const r = repo.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '')
     if (!r.includes('/')) return
-    setRows([]); setSkipped([]); setDone(null); setRunning(true)
+    setRows([]); setSkipped([]); setDone(null); setErr(null); setRunning(true)
     openSSE(`/api/audit?repo=${encodeURIComponent(r)}`, (d) => {
       if (d.type === 'checking') setChecking(d.lib)
       if (d.type === 'log') setSkipped(s => [...s, d.text])
       if (d.type === 'finding') setRows(x => [...x, d])
+      if (d.type === 'error') setErr(d.text || 'stream failed')
       if (d.type === 'done') { setDone(d); onDone?.(d) }
-    }, () => { setRunning(false); setChecking(null) })
+    }, (last) => {
+      setRunning(false); setChecking(null)
+      if (!last) setErr('connection to the engine dropped — no result')
+    })
   }
 
   const vuln = rows.filter(r => !r.patched)
@@ -170,6 +175,7 @@ function Audit({ onDone }) {
       </div>
 
       {checking && <div className="checking mono">scanning for {checking}…</div>}
+      {err && <div className="errbox"><b>Scan failed.</b> <span className="mono">{err}</span></div>}
 
       {rows.length > 0 && (
         <div className="findings">
@@ -370,14 +376,14 @@ function TargetView({ target }) {
 
   const views = {
     wrapper: { lines: src?.wrapper || [], from: 1, note: "ClanLib's only divergence: seven lines. Everything below is byte-identical to upstream v1.16." },
-    head: { lines: src?.head || [], from: 1, note: 'The top of the file. There is no version field, no package name, nothing a scanner can match.' },
+    head: { lines: src?.head || [], from: 1, note: 'Line 8 does say "v1.16" — in a comment, for humans. No scanner reads comments. There is no manifest entry, no package coordinate, nothing machine-readable declaring this as a dependency.' },
     vuln: { lines: src?.vuln || [], from: src?.vuln_start || 1, note: 'The function the proof-of-concept overflows. The crash lands at line 1065.' },
   }
   const v = views[tab]
 
   return (
     <section className="screen" id="target">
-      <Head n="02" title="The target" sub="One of those copies, in detail. This is ClanLib's actual file at the pinned commit, fetched from the repository." />
+      <Head n="02" title="The target" sub="One of those copies, in detail. This is ClanLib's actual file at the pinned commit, fetched from the repository. It carries no declared dependency identity — nothing a package manager or SBOM tool can resolve." />
       <div className="tgrid">
         <div className="panel">
           <div className="p-k">downstream</div>
@@ -386,8 +392,8 @@ function TargetView({ target }) {
           <div className="chip-row">
             <span className="chip">renamed <span className="mono">.c → .h</span></span>
             <span className="chip">{src?.total_lines || '5494'} lines</span>
-            <span className="chip bad">no version</span>
-            <span className="chip bad">not in any manifest</span>
+            <span className="chip bad">no manifest entry</span>
+            <span className="chip bad">no package coordinate</span>
           </div>
           <div className="p-k mt">identified as</div>
           <div className="p-v accent">stb_vorbis v1.16</div>
@@ -444,7 +450,7 @@ function Repair({ target, res, logs, running, run }) {
 
   return (
     <section className="screen" id="repair">
-      <Head n="03" title="The repair" sub="A deterministic three-way merge, then a hard gate: the result must hash to an independently-reviewed known-correct postimage, or the run is refused."
+      <Head n="03" title="The repair" sub="A deterministic three-way merge — the general case, because it preserves whatever the downstream changed instead of overwriting it. Then a hard gate: the result must hash to an independently-reviewed known-correct postimage, or the run is refused."
             action={<button className={`run ${running ? 'busy' : ''}`} onClick={run} disabled={running}>
               {running ? 'repairing…' : res ? 'run again' : 'run repair'}</button>} />
 
@@ -510,12 +516,15 @@ function Proof({ res }) {
       <Head n="04" title="The proof" sub="An assertion versus a receipt. Both lanes were given the same file and the same crafted input." />
       <div className="proof">
         <div className="lane agent">
-          <div className="lane-h">An agent says</div>
+          <div className="lane-h">The usual output <span className="illus">illustrative</span></div>
           <div className="agent-msg">
             <div className="agent-check">✓</div>
-            <p>“I&apos;ve applied the upstream security fix. The vulnerability has been resolved.”</p>
+            <p>“Applied the upstream security fix. The vulnerability has been resolved.”</p>
           </div>
-          <div className="lane-f bad">confident · unverifiable</div>
+          <div className="lane-f bad">
+            a claim, not a measurement
+            <div className="illus-note">Representative of how a coding agent reports a patch. Not captured from a live model run.</div>
+          </div>
         </div>
         <div className="lane mitos">
           <div className="lane-h">Mitos proves</div>
@@ -539,9 +548,10 @@ function Proof({ res }) {
       {probe && (
         <>
           <div className="offset-callout">
-            <span className="mono">stb_vorbis.h:1065</span> — upstream crashes at
-            <span className="mono"> 1058</span>. Exactly <b>+7</b>: ClanLib&apos;s wrapper shifted every
-            line. That offset is why a naive patch fails here and why the merge is required.
+            <span className="mono">stb_vorbis.h:1065</span> — upstream faults at
+            <span className="mono"> 1058</span>. Exactly <b>+7</b>, the height of ClanLib&apos;s wrapper.
+            That offset is the provenance signature: this stack trace comes from <b>ClanLib&apos;s own
+            translation unit</b>, not from upstream&apos;s file.
           </div>
           <div className="raw">
             <div className="raw-k">raw probe output</div>

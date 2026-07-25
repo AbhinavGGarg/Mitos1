@@ -8,13 +8,18 @@ import React, { Suspense } from 'react'
    exactly as it did before — no provider, no suspense boundary, no crash. */
 
 const PROJECT_ID = import.meta.env.VITE_HEXCLAVE_PROJECT_ID
-export const hexclaveEnabled = Boolean(PROJECT_ID)
+const API_URL = import.meta.env.VITE_HEXCLAVE_API_URL
+const PUBLISHABLE_KEY = import.meta.env.VITE_HEXCLAVE_PUBLISHABLE_CLIENT_KEY
+export const hexclaveEnabled = Boolean(PROJECT_ID && API_URL)
 
 let mod = null, clientApp = null
 if (hexclaveEnabled) {
   try {
     mod = await import('@hexclave/react')
     clientApp = new mod.HexclaveClientApp({
+      projectId: PROJECT_ID,
+      baseUrl: API_URL,
+      ...(PUBLISHABLE_KEY ? { publishableClientKey: PUBLISHABLE_KEY } : {}),
       tokenStore: 'cookie',
       urls: { default: { type: 'hosted' } },
     })

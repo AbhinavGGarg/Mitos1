@@ -6,3 +6,5 @@ __pycache__/
 mitos-out/
 
 watchlist.json
+
+.env
