@@ -1,0 +1,88 @@
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user clone --quiet https://github.com/nothings/stb $UPSTREAM
+  -> rc=0
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM config --local --get remote.origin.url
+  -> rc=0
+  stdout: https://github.com/nothings/stb
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM for-each-ref refs/replace
+  -> rc=0
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM config --local --list
+  -> rc=0
+  stdout: branch.master.merge=refs/heads/master
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user clone --quiet https://github.com/woltapp/blurhash $DOWNSTREAM
+  -> rc=0
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM config --local --get remote.origin.url
+  -> rc=0
+  stdout: https://github.com/woltapp/blurhash
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM for-each-ref refs/replace
+  -> rc=0
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM config --local --list
+  -> rc=0
+  stdout: branch.master.merge=refs/heads/master
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM rev-parse --verify --quiet d60594847ecca4553b18e7607d01328c58d95a42^{commit}
+  -> rc=0
+  stdout: d60594847ecca4553b18e7607d01328c58d95a42
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM cat-file -p d60594847ecca4553b18e7607d01328c58d95a42
+  -> rc=0
+  stdout: to a maximum permitted size can save a lot of headaches in the wild.
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM rev-parse --verify --quiet 712a47f946b98c30097eb1ada086ea00b18681ec^{commit}
+  -> rc=0
+  stdout: 712a47f946b98c30097eb1ada086ea00b18681ec
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM show 98ca24b8c7a69e1fc80e3d6a1e014b0e113980b8:stb_image.h
+  -> rc=0
+  stdout: */
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM show d60594847ecca4553b18e7607d01328c58d95a42:stb_image.h
+  -> rc=0
+  stdout: */
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM show 712a47f946b98c30097eb1ada086ea00b18681ec:C/stb_image.h
+  -> rc=0
+  stdout: */
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM diff 98ca24b8c7a69e1fc80e3d6a1e014b0e113980b8 d60594847ecca4553b18e7607d01328c58d95a42 -- stb_image.h
+  -> rc=0
+  stdout:     if (comp) *comp = s->img_n;
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user merge-file -p --diff3 $MERGE/current.h $MERGE/base.h $MERGE/other.h
+  -> rc=0
+  stdout: */
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM worktree add --quiet --detach $RUN/downstream_wt 712a47f946b98c30097eb1ada086ea00b18681ec
+  -> rc=0
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $RUN/downstream_wt rev-parse HEAD
+  -> rc=0
+  stdout: 712a47f946b98c30097eb1ada086ea00b18681ec
+$ make clean   ($RUN/downstream_wt/C)
+  -> rc=0
+  stdout: rm -f blurhash_decoder
+$ make blurhash_encoder   ($RUN/downstream_wt/C)
+  -> rc=0
+  stdout: cc -o blurhash_encoder encode_stb.c encode.c -lm -Ofast
+$ make clean   ($RUN/downstream_wt/C)
+  -> rc=0
+  stdout: rm -f blurhash_decoder
+$ make blurhash_encoder   ($RUN/downstream_wt/C)
+  -> rc=0
+  stdout: cc -o blurhash_encoder encode_stb.c encode.c -lm -Ofast
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $RUN/downstream_wt checkout -- C/stb_image.h
+  -> rc=0
+$ $RUN/encoder_before 4 3 $PROBES/normal.bmp   ($RUN)
+  -> rc=0
+  stdout: LmEx|s%BfL%N*FtKfNtQhCgJfQgJ
+$ $RUN/encoder_after 4 3 $PROBES/normal.bmp   ($RUN)
+  -> rc=0
+  stdout: LmEx|s%BfL%N*FtKfNtQhCgJfQgJ
+$ $RUN/encoder_before 4 3 $PROBES/oversized.bmp   ($RUN)
+  -> rc=0
+  stdout: L00000fQfQfQfQfQfQfQfQfQfQfQ
+$ $RUN/encoder_after 4 3 $PROBES/oversized.bmp   ($RUN)
+  -> rc=1
+$ $RUN/encoder_before 4 3 $PROBES/oversized.pnm   ($RUN)
+  -> rc=0
+  stdout: L00000fQfQfQfQfQfQfQfQfQfQfQ
+$ $RUN/encoder_after 4 3 $PROBES/oversized.pnm   ($RUN)
+  -> rc=1
+$ cc --version
+  -> rc=0
+  stdout: InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+$ make --version
+  -> rc=0
+  stdout: This program built for i386-apple-darwin11.3.0
+$ git --version
+  -> rc=0
+  stdout: git version 2.41.0

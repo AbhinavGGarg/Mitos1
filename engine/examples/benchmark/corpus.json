@@ -1,0 +1,17 @@
+{
+  "library": "stb_image.h (nothings/stb) — the canonical widely-copied single-file C image loader",
+  "discovery_query": "stbi__process_frame_header language:c",
+  "build_defines": ["STB_IMAGE_IMPLEMENTATION"],
+  "note": "Each fix below is a real security/overflow hardening stb introduced over time. A copy either contains the introduced symbol (has the fix) or does not (stale). Presence/absence is checked in the copy's own bytes. The commit API being down for nothings/stb blocks automated mining of the full history; this curated set is the pilot, and mitos/benchmark.py scales to any number of fixes.",
+  "fixes": [
+    {"marker": "STBI_MAX_DIMENSIONS", "fix_date": "2020-04-28", "desc": "reject oversized image dimensions", "transplant_patch": "stbi_max_dimensions.patch"},
+    {"marker": "stbi__mad4sizes_valid", "desc": "overflow-safe 4-term size multiply (allocation integer-overflow hardening)"},
+    {"marker": "stbi__mad3sizes_valid", "desc": "overflow-safe 3-term size multiply"},
+    {"marker": "stbi__mad2sizes_valid", "desc": "overflow-safe 2-term size multiply"},
+    {"marker": "stbi__malloc_mad4", "desc": "overflow-checked malloc (4-term)"},
+    {"marker": "stbi__malloc_mad3", "desc": "overflow-checked malloc (3-term)"},
+    {"marker": "stbi__malloc_mad2", "desc": "overflow-checked malloc (2-term)"},
+    {"marker": "stbi__addints_valid", "desc": "signed-int addition overflow check (JPEG decode)"},
+    {"marker": "stbi__mul2shorts_valid", "desc": "short multiply overflow check (JPEG merge dc/ac)"}
+  ]
+}

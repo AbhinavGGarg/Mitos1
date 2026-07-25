@@ -1,0 +1,24 @@
+{
+  "func": "save_blob",
+  "source_file": "/Users/abhinavgarg/Wizard Hackathon/patchdna/examples/memcpy_bounds/corpus/save_blob.c",
+  "lineage_confidence": 1.0,
+  "patch_confidence": 0.99,
+  "guard_inserted": "if (n > cap) return -1;",
+  "role_mapping": {
+    "size": "n",
+    "dest": "out",
+    "capacity": "cap",
+    "capacity_reason": "sole size/capacity-named parameter",
+    "callee": "memcpy"
+  },
+  "verification": {
+    "compiler": "clang -fsanitize=address",
+    "before": "heap-buffer-overflow",
+    "after": "clean exit, returns -1",
+    "passed": true
+  },
+  "upstream_fix": {
+    "function": "store_record",
+    "label": "CWE-120 missing bounds check before copy"
+  }
+}

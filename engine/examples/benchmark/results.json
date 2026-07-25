@@ -1,0 +1,691 @@
+{
+  "library": "stb_image.h (nothings/stb) \u2014 the canonical widely-copied single-file C image loader",
+  "copies_scanned": 25,
+  "fixes": 9,
+  "total_judgments": 225,
+  "total_marker_absent": 92,
+  "overall_marker_absence_rate": 0.409,
+  "copies": [
+    {
+      "repo": "woltapp/blurhash",
+      "path": "C/stb_image.h",
+      "blob_sha": "712a47f946b98c30097eb1ada086ea00b18681ec",
+      "content_hash": "c795e7fd433c",
+      "last_commit": "2017-07-06T13:03:49Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "revery-ui/revery",
+      "path": "include/stb_image.h",
+      "blob_sha": "141f70f69d6abd69674b46d805a783411b38cd79",
+      "content_hash": "84ca6bb728b5",
+      "last_commit": "2020-06-03T16:28:31Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "PaoloMazzon/JamEngine",
+      "path": "src/stb_image.c",
+      "blob_sha": "1cfbeed91ac3ef07b7de382b5c1f8f11d43e90f5",
+      "content_hash": "76f9f93c2f2a",
+      "last_commit": "2020-05-13T05:53:50Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "DCubix/GUI",
+      "path": "stb.h",
+      "blob_sha": "4e4d83dba3214c4062a6901b68f71d53519b1660",
+      "content_hash": "240fa86fa1b7",
+      "last_commit": "2019-05-23T19:21:21Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "ArtyZe/yolo_quantization",
+      "path": "src/stb_image.h",
+      "blob_sha": "08a1062633f8794a799a7af6c018ef209a411882",
+      "content_hash": "ffc7ecc09c17",
+      "last_commit": "2020-10-17T07:56:34Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "mkkellogg/Core",
+      "path": "image/STBImage.h",
+      "blob_sha": "d0b142237550258c2aa02dba60da2122c2a062bb",
+      "content_hash": "14f6cbf18527",
+      "last_commit": "2019-03-06T18:16:40Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "alesandro2251/Computer-Graphic-Legacy-OpenGL-Core-OpenGL",
+      "path": "Lab 12/stb_image.h",
+      "blob_sha": "fe7aa1c8c1f1c466c4688b509e6dad6c5fa76724",
+      "content_hash": "95d76fd0878d",
+      "last_commit": "2023-11-28T15:26:50Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "servo/rust-stb-image",
+      "path": "src/stb_image.c",
+      "blob_sha": "b8ac3530139f54da32984f2e3591600700ab9448",
+      "content_hash": "9e823e45b1fe",
+      "last_commit": "2023-07-17T13:14:27Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "GustavoAudi/EntreNosotros3D",
+      "path": "Include/stb_image.h",
+      "blob_sha": "3671be914e91f9818f6cd4553726c887e7dc28c1",
+      "content_hash": "547205b92168",
+      "last_commit": "2021-04-21T00:29:12Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "yang18127/opengl-skeletal-runner",
+      "path": "include/stb_image.h",
+      "blob_sha": "7498e99314053c1249d4c4b17f806e115cac1425",
+      "content_hash": "747876e7dfad",
+      "last_commit": "2026-05-03T11:22:29Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "andrewwillmott/sun-sky",
+      "path": "stb_image_mini.h",
+      "blob_sha": "0afb061830b556443ed18a01c4842206970bd251",
+      "content_hash": "bee8ef7aa0f3",
+      "last_commit": "2019-03-07T22:07:59Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "IvoTomasovich/Tetris",
+      "path": "stb_image.h",
+      "blob_sha": "913333e2e7f4f639a36f6c36bb37fd8a0d555f1f",
+      "content_hash": "a14ceb219b22",
+      "last_commit": "2024-12-16T20:06:15Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "j-lthr/TerrainRenderTest",
+      "path": "src/stb/image.h",
+      "blob_sha": "acba0cf8b1285869d0146cd71853a9e513bfd35f",
+      "content_hash": "c8d19840bed8",
+      "last_commit": "2020-02-13T20:04:57Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "meh2481/RetSphinxEngine",
+      "path": "dep/stb_image.h",
+      "blob_sha": "cbf61bcb6d7affd5831f975263d98c79c8e8ce79",
+      "content_hash": "3e08556d97b2",
+      "last_commit": "2016-05-26T03:35:43Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "rolandbernard/chat",
+      "path": "src/image.h",
+      "blob_sha": "c60b51cafa7aad1306c8d26cb75e77a6337ba30c",
+      "content_hash": "64f4a9c569d7",
+      "last_commit": "2019-10-03T14:24:12Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "1tgr/smallpt-gpu",
+      "path": "stb/stb_image.h",
+      "blob_sha": "5e94e5805af8122a4a0e2ead1df9906f2c101bab",
+      "content_hash": "58249f6004aa",
+      "last_commit": "2016-12-05T12:18:38Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "mojing2/stb",
+      "path": "stb_image.c",
+      "blob_sha": "e7faa5de00bc58654c1ef1618fece7729fe5e97e",
+      "content_hash": "dee18781b18c",
+      "last_commit": "2017-10-13T03:24:24Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "KainMason/C330-Computer-Graphics-and-Visualization",
+      "path": "Headers/stb_image.h",
+      "blob_sha": "fa4199153042dc42ab5d479b34bc76782352578d",
+      "content_hash": "a813098e3cbc",
+      "last_commit": "2025-11-24T00:21:11Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "Olzeev/GravitySimulation",
+      "path": "utils/stb_image.h",
+      "blob_sha": "47c75437ca52622c5fd913d303b6f6e0e7dac075",
+      "content_hash": "c05d4f88ab5a",
+      "last_commit": "2026-02-22T13:23:24Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "rygorous/stbopt",
+      "path": "stb_image_orig.h",
+      "blob_sha": "f4f80875e6cf2eaf408b1bb34f75e0a0870e2bb7",
+      "content_hash": "31a7ca7ae10c",
+      "last_commit": "2014-12-16T17:05:22Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "mstallmo/OpenGLCPP",
+      "path": "OpenGLCPP/stb_image.h",
+      "blob_sha": "7b6a8284b411a795b81cec1644a092c3fca0fa8b",
+      "content_hash": "155017e657b6",
+      "last_commit": "2017-11-19T17:49:10Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "w103csh/GuppyVulkan",
+      "path": "libs/stb_image.h",
+      "blob_sha": "5036cd15f53f820f9ab4a411c36ca0424ab4a2f4",
+      "content_hash": "90d67898339a",
+      "last_commit": "2019-04-13T01:35:19Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "Tw1ddle/geometrize-lib-example",
+      "path": "lib/stb/stb_image.h",
+      "blob_sha": "d6231fc14304eb84248d6362443a2ee9d681a71e",
+      "content_hash": "cd105a366bd1",
+      "last_commit": "2017-03-26T17:25:48Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "codenamecpp/carnage3d",
+      "path": "src/std_image.h",
+      "blob_sha": "1cddd91e5f696cc05be57e3532c04ddc1b37d63f",
+      "content_hash": "56e67cc41ecf",
+      "last_commit": "2019-10-04T19:07:36Z",
+      "ground_truth": null
+    },
+    {
+      "repo": "liu7d7/piqu",
+      "path": "include/stb_image.h",
+      "blob_sha": "6ea0041eb3712d6ddb259ef3c16f35bad2137537",
+      "content_hash": "bb00ad751be6",
+      "last_commit": "2022-12-21T20:32:58Z",
+      "ground_truth": null
+    }
+  ],
+  "marker_absence": [
+    {
+      "marker": "STBI_MAX_DIMENSIONS",
+      "desc": "reject oversized image dimensions",
+      "absent": 24,
+      "present": 1,
+      "absence_rate": 0.96,
+      "predate_corroboration": 14
+    },
+    {
+      "marker": "stbi__mad4sizes_valid",
+      "desc": "overflow-safe 4-term size multiply (allocation integer-overflow hardening)",
+      "absent": 4,
+      "present": 21,
+      "absence_rate": 0.16,
+      "predate_corroboration": null
+    },
+    {
+      "marker": "stbi__mad3sizes_valid",
+      "desc": "overflow-safe 3-term size multiply",
+      "absent": 3,
+      "present": 22,
+      "absence_rate": 0.12,
+      "predate_corroboration": null
+    },
+    {
+      "marker": "stbi__mad2sizes_valid",
+      "desc": "overflow-safe 2-term size multiply",
+      "absent": 3,
+      "present": 22,
+      "absence_rate": 0.12,
+      "predate_corroboration": null
+    },
+    {
+      "marker": "stbi__malloc_mad4",
+      "desc": "overflow-checked malloc (4-term)",
+      "absent": 4,
+      "present": 21,
+      "absence_rate": 0.16,
+      "predate_corroboration": null
+    },
+    {
+      "marker": "stbi__malloc_mad3",
+      "desc": "overflow-checked malloc (3-term)",
+      "absent": 3,
+      "present": 22,
+      "absence_rate": 0.12,
+      "predate_corroboration": null
+    },
+    {
+      "marker": "stbi__malloc_mad2",
+      "desc": "overflow-checked malloc (2-term)",
+      "absent": 3,
+      "present": 22,
+      "absence_rate": 0.12,
+      "predate_corroboration": null
+    },
+    {
+      "marker": "stbi__addints_valid",
+      "desc": "signed-int addition overflow check (JPEG decode)",
+      "absent": 24,
+      "present": 1,
+      "absence_rate": 0.96,
+      "predate_corroboration": null
+    },
+    {
+      "marker": "stbi__mul2shorts_valid",
+      "desc": "short multiply overflow check (JPEG merge dc/ac)",
+      "absent": 24,
+      "present": 1,
+      "absence_rate": 0.96,
+      "predate_corroboration": null
+    }
+  ],
+  "transplant_precision": {
+    "marker": "STBI_MAX_DIMENSIONS",
+    "results": [
+      {
+        "repo": "woltapp/blurhash",
+        "blob_sha": "712a47f946b98c30097eb1ada086ea00b18681ec",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ],
+        "compiles": true,
+        "behavioural_fires": true
+      },
+      {
+        "repo": "revery-ui/revery",
+        "blob_sha": "141f70f69d6abd69674b46d805a783411b38cd79",
+        "status": "placement_pass",
+        "sites": 5,
+        "inserted": 11,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__psd_load"
+        ],
+        "compiles": true,
+        "behavioural_fires": true
+      },
+      {
+        "repo": "PaoloMazzon/JamEngine",
+        "blob_sha": "1cfbeed91ac3ef07b7de382b5c1f8f11d43e90f5",
+        "status": "placement_pass",
+        "sites": 6,
+        "inserted": 12,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load",
+          "stbi__tga_load"
+        ],
+        "compiles": false,
+        "behavioural_fires": false
+      },
+      {
+        "repo": "DCubix/GUI",
+        "blob_sha": "4e4d83dba3214c4062a6901b68f71d53519b1660",
+        "status": "placement_pass",
+        "sites": 3,
+        "inserted": 7,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__pic_load",
+          "stbi__psd_load"
+        ],
+        "compiles": true,
+        "behavioural_fires": false
+      },
+      {
+        "repo": "ArtyZe/yolo_quantization",
+        "blob_sha": "08a1062633f8794a799a7af6c018ef209a411882",
+        "status": "placement_pass",
+        "sites": 6,
+        "inserted": 13,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "mkkellogg/Core",
+        "blob_sha": "d0b142237550258c2aa02dba60da2122c2a062bb",
+        "status": "placement_pass",
+        "sites": 6,
+        "inserted": 13,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "alesandro2251/Computer-Graphic-Legacy-OpenGL-Core-OpenGL",
+        "blob_sha": "fe7aa1c8c1f1c466c4688b509e6dad6c5fa76724",
+        "status": "placement_pass",
+        "sites": 6,
+        "inserted": 13,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "servo/rust-stb-image",
+        "blob_sha": "b8ac3530139f54da32984f2e3591600700ab9448",
+        "status": "already_fixed"
+      },
+      {
+        "repo": "GustavoAudi/EntreNosotros3D",
+        "blob_sha": "3671be914e91f9818f6cd4553726c887e7dc28c1",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "yang18127/opengl-skeletal-runner",
+        "blob_sha": "7498e99314053c1249d4c4b17f806e115cac1425",
+        "status": "placement_pass",
+        "sites": 4,
+        "inserted": 9,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__gif_header",
+          "stbi__pic_load",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "andrewwillmott/sun-sky",
+        "blob_sha": "0afb061830b556443ed18a01c4842206970bd251",
+        "status": "placement_pass",
+        "sites": 1,
+        "inserted": 2,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__process_frame_header"
+        ]
+      },
+      {
+        "repo": "IvoTomasovich/Tetris",
+        "blob_sha": "913333e2e7f4f639a36f6c36bb37fd8a0d555f1f",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "j-lthr/TerrainRenderTest",
+        "blob_sha": "acba0cf8b1285869d0146cd71853a9e513bfd35f",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load",
+          "stbi__tga_load"
+        ]
+      },
+      {
+        "repo": "meh2481/RetSphinxEngine",
+        "blob_sha": "cbf61bcb6d7affd5831f975263d98c79c8e8ce79",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "rolandbernard/chat",
+        "blob_sha": "c60b51cafa7aad1306c8d26cb75e77a6337ba30c",
+        "status": "placement_pass",
+        "sites": 6,
+        "inserted": 13,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "1tgr/smallpt-gpu",
+        "blob_sha": "5e94e5805af8122a4a0e2ead1df9906f2c101bab",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "mojing2/stb",
+        "blob_sha": "e7faa5de00bc58654c1ef1618fece7729fe5e97e",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "KainMason/C330-Computer-Graphics-and-Visualization",
+        "blob_sha": "fa4199153042dc42ab5d479b34bc76782352578d",
+        "status": "placement_pass",
+        "sites": 4,
+        "inserted": 9,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__gif_header",
+          "stbi__pic_load",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "Olzeev/GravitySimulation",
+        "blob_sha": "47c75437ca52622c5fd913d303b6f6e0e7dac075",
+        "status": "placement_pass",
+        "sites": 6,
+        "inserted": 13,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "rygorous/stbopt",
+        "blob_sha": "f4f80875e6cf2eaf408b1bb34f75e0a0870e2bb7",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "mstallmo/OpenGLCPP",
+        "blob_sha": "7b6a8284b411a795b81cec1644a092c3fca0fa8b",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "w103csh/GuppyVulkan",
+        "blob_sha": "5036cd15f53f820f9ab4a411c36ca0424ab4a2f4",
+        "status": "placement_pass",
+        "sites": 3,
+        "inserted": 7,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__pic_load",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "Tw1ddle/geometrize-lib-example",
+        "blob_sha": "d6231fc14304eb84248d6362443a2ee9d681a71e",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "codenamecpp/carnage3d",
+        "blob_sha": "1cddd91e5f696cc05be57e3532c04ddc1b37d63f",
+        "status": "placement_pass",
+        "sites": 7,
+        "inserted": 15,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__bmp_load",
+          "stbi__gif_header",
+          "stbi__hdr_load",
+          "stbi__pic_load",
+          "stbi__process_frame_header",
+          "stbi__psd_load"
+        ]
+      },
+      {
+        "repo": "liu7d7/piqu",
+        "blob_sha": "6ea0041eb3712d6ddb259ef3c16f35bad2137537",
+        "status": "placement_pass",
+        "sites": 4,
+        "inserted": 9,
+        "misplaced": 0,
+        "wrong_function": 0,
+        "expected_funcs": [
+          "stbi__gif_header",
+          "stbi__pic_load",
+          "stbi__psd_load"
+        ]
+      }
+    ],
+    "summary": {
+      "already_fixed": 1,
+      "no_sites": 0,
+      "applicable": 24,
+      "placement_pass": 24,
+      "placement_fail": 0,
+      "wrong_function_insertions": 0,
+      "compiled": 3,
+      "behavioural_fired": 2
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "func": "append_chunk",
+  "source_file": "/Users/abhinavgarg/Wizard Hackathon/patchdna/examples/memcpy_bounds/corpus/append_chunk.c",
+  "lineage_confidence": 0.519,
+  "patch_confidence": 0.91,
+  "guard_inserted": "if (chunk_len > dstbuf_len) return -1;",
+  "role_mapping": {
+    "size": "chunk_len",
+    "dest": "dstbuf",
+    "capacity": "dstbuf_len",
+    "capacity_reason": "name-matched destination 'dstbuf'",
+    "callee": "memcpy"
+  },
+  "verification": {
+    "compiler": "clang -fsanitize=address",
+    "before": "heap-buffer-overflow",
+    "after": "clean exit, returns -1",
+    "passed": true
+  },
+  "upstream_fix": {
+    "function": "store_record",
+    "label": "CWE-120 missing bounds check before copy"
+  }
+}

@@ -1,0 +1,283 @@
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user clone --quiet https://github.com/nothings/stb $UPSTREAM
+  rc=0 timed_out=False
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM config --local --get remote.origin.url
+  rc=0 timed_out=False
+  --- stdout ---
+    https://github.com/nothings/stb
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM for-each-ref refs/replace
+  rc=0 timed_out=False
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM config --local --list
+  rc=0 timed_out=False
+  --- stdout ---
+    core.repositoryformatversion=0
+    core.filemode=true
+    core.bare=false
+    core.logallrefupdates=true
+    core.ignorecase=true
+    core.precomposeunicode=true
+    remote.origin.url=https://github.com/nothings/stb
+    remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+    branch.master.remote=origin
+    branch.master.merge=refs/heads/master
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user clone --quiet https://github.com/woltapp/blurhash $DOWNSTREAM
+  rc=0 timed_out=False
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM config --local --get remote.origin.url
+  rc=0 timed_out=False
+  --- stdout ---
+    https://github.com/woltapp/blurhash
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM for-each-ref refs/replace
+  rc=0 timed_out=False
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM config --local --list
+  rc=0 timed_out=False
+  --- stdout ---
+    core.repositoryformatversion=0
+    core.filemode=true
+    core.bare=false
+    core.logallrefupdates=true
+    core.ignorecase=true
+    core.precomposeunicode=true
+    remote.origin.url=https://github.com/woltapp/blurhash
+    remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+    branch.master.remote=origin
+    branch.master.merge=refs/heads/master
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM rev-parse --verify --quiet d60594847ecca4553b18e7607d01328c58d95a42^{commit}
+  rc=0 timed_out=False
+  --- stdout ---
+    d60594847ecca4553b18e7607d01328c58d95a42
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM cat-file -p d60594847ecca4553b18e7607d01328c58d95a42
+  rc=0 timed_out=False
+  --- stdout ---
+    tree 279cc6694bc2b791cb5d1ceb6e16e4618c14d773
+    parent 98ca24b8c7a69e1fc80e3d6a1e014b0e113980b8
+    author Ryan C. Gordon <icculus@icculus.org> 1588089262 -0400
+    committer Ryan C. Gordon <icculus@icculus.org> 1588094925 -0400
+
+    Reject images that are too large (as defined by the application).
+
+    The BMP loader already had this hardcoded to (1 << 24) pixels, so this seems
+    like a good default to apply to all formats, but many apps will want to clamp
+    this much much lower.
+
+    It's possible to craft malicious but valid images that are enormous, causing
+    stb_image to allocate tons of memory and eat a ton of CPU, so locking these
+    to a maximum permitted size can save a lot of headaches in the wild.
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM rev-parse --verify --quiet 712a47f946b98c30097eb1ada086ea00b18681ec^{commit}
+  rc=0 timed_out=False
+  --- stdout ---
+    712a47f946b98c30097eb1ada086ea00b18681ec
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM show 98ca24b8c7a69e1fc80e3d6a1e014b0e113980b8:stb_image.h
+  rc=0 timed_out=False
+  --- stdout elided: 269284 bytes, sha256 2c4a0def881db117 (file content — a hashed input) ---
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM show d60594847ecca4553b18e7607d01328c58d95a42:stb_image.h
+  rc=0 timed_out=False
+  --- stdout elided: 271549 bytes, sha256 36ea423c95208ca6 (file content — a hashed input) ---
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM show 712a47f946b98c30097eb1ada086ea00b18681ec:C/stb_image.h
+  rc=0 timed_out=False
+  --- stdout elided: 250035 bytes, sha256 c795e7fd433cefe6 (file content — a hashed input) ---
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $UPSTREAM diff 98ca24b8c7a69e1fc80e3d6a1e014b0e113980b8 d60594847ecca4553b18e7607d01328c58d95a42 -- stb_image.h
+  rc=0 timed_out=False
+  --- stdout ---
+    diff --git a/stb_image.h b/stb_image.h
+    index c9872bf..153ada2 100644
+    --- a/stb_image.h
+    +++ b/stb_image.h
+    @@ -318,7 +318,14 @@ RECENT REVISION HISTORY:
+     //   - If you use STBI_NO_PNG (or _ONLY_ without PNG), and you still
+     //     want the zlib decoder to be available, #define STBI_SUPPORT_ZLIB
+     //
+    -
+    +//  - If you define STBI_MAX_DIMENSIONS, stb_image will reject images greater
+    +//    than that size (in either width or height) without further processing.
+    +//    This is to let programs in the wild set an upper bound to prevent
+    +//    denial-of-service attacks on untrusted data, as one could generate a
+    +//    valid image of gigantic dimensions and force stb_image to allocate a
+    +//    huge block of memory and spend disproportionate time decoding it. By
+    +//    default this is set to (1 << 24), which is 16777216, but that's still
+    +//    very big.
+
+     #ifndef STBI_NO_STDIO
+     #include <stdio.h>
+    @@ -734,6 +741,10 @@ static int stbi__sse2_available(void)
+     #define STBI_SIMD_ALIGN(type, name) type name
+     #endif
+
+    +#ifndef STBI_MAX_DIMENSIONS
+    +#define STBI_MAX_DIMENSIONS (1 << 24)
+    +#endif
+    +
+     ///////////////////////////////////////////////
+     //
+     //  stbi__context struct and start_xxx functions
+    @@ -3163,6 +3174,8 @@ static int stbi__process_frame_header(stbi__jpeg *z, int scan)
+        p  = stbi__get8(s);            if (p != 8) return stbi__err("only 8-bit","JPEG format not supported: 8-bit only"); // JPEG baseline
+        s->img_y = stbi__get16be(s);   if (s->img_y == 0) return stbi__err("no header height", "JPEG format not supported: delayed height"); // Legal, but we don't handle it--but neither does IJG
+        s->img_x = stbi__get16be(s);   if (s->img_x == 0) return stbi__err("0 width","Corrupt JPEG"); // JPEG requires
+    +   if (s->img_y > STBI_MAX_DIMENSIONS) return stbi__err("too large","Very large image (corrupt?)");
+    +   if (s->img_x > STBI_MAX_DIMENSIONS) return stbi__err("too large","Very large image (corrupt?)");
+        c = stbi__get8(s);
+        if (c != 3 && c != 1 && c != 4) return stbi__err("bad component count","Corrupt JPEG");
+        s->img_n = c;
+    @@ -4930,8 +4943,10 @@ static int stbi__parse_png_file(stbi__png *z, int scan, int req_comp)
+                 if (!first) return stbi__err("multiple IHDR","Corrupt PNG");
+                 first = 0;
+                 if (c.length != 13) return stbi__err("bad IHDR len","Corrupt PNG");
+    -            s->img_x = stbi__get32be(s); if (s->img_x > (1 << 24)) return stbi__err("too large","Very large image (corrupt?)");
+    -            s->img_y = stbi__get32be(s); if (s->img_y > (1 << 24)) return stbi__err("too large","Very large image (corrupt?)");
+    +            s->img_x = stbi__get32be(s);
+    +            s->img_y = stbi__get32be(s);
+    +            if (s->img_y > STBI_MAX_DIMENSIONS) return stbi__err("too large","Very large image (corrupt?)");
+    +            if (s->img_x > STBI_MAX_DIMENSIONS) return stbi__err("too large","Very large image (corrupt?)");
+                 z->depth = stbi__get8(s);  if (z->depth != 1 && z->depth != 2 && z->depth != 4 && z->depth != 8 && z->depth != 16)  return stbi__err("1/2/4/8/16-bit only","PNG not supported: 1/2/4/8/16-bit only");
+                 color = stbi__get8(s);  if (color > 6)         return stbi__err("bad ctype","Corrupt PNG");
+                 if (color == 3 && z->depth == 16)                  return stbi__err("bad ctype","Corrupt PNG");
+    @@ -5339,6 +5354,9 @@ static void *stbi__bmp_load(stbi__context *s, int *x, int *y, int *comp, int req
+        flip_vertically = ((int) s->img_y) > 0;
+        s->img_y = abs((int) s->img_y);
+
+    +   if (s->img_y > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +   if (s->img_x > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +
+        mr = info.mr;
+        mg = info.mg;
+        mb = info.mb;
+    @@ -5675,6 +5693,9 @@ static void *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int req
+        STBI_NOTUSED(tga_x_origin); // @TODO
+        STBI_NOTUSED(tga_y_origin); // @TODO
+
+    +   if (tga_height > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +   if (tga_width > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +
+        //   do a tiny bit of precessing
+        if ( tga_image_type >= 8 )
+        {
+    @@ -5927,6 +5948,9 @@ static void *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req
+        h = stbi__get32be(s);
+        w = stbi__get32be(s);
+
+    +   if (h > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +   if (w > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +
+        // Make sure the depth is 8 bits.
+        bitdepth = stbi__get16be(s);
+        if (bitdepth != 8 && bitdepth != 16)
+    @@ -6281,6 +6305,10 @@ static void *stbi__pic_load(stbi__context *s,int *px,int *py,int *comp,int req_c
+
+        x = stbi__get16be(s);
+        y = stbi__get16be(s);
+    +
+    +   if (y > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +   if (x > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +
+        if (stbi__at_eof(s))  return stbi__errpuc("bad file","file too short (pic header)");
+        if (!stbi__mad3sizes_valid(x, y, 4, 0)) return stbi__errpuc("too large", "PIC image too large to decode");
+
+    @@ -6389,6 +6417,9 @@ static int stbi__gif_header(stbi__context *s, stbi__gif *g, int *comp, int is_in
+        g->ratio = stbi__get8(s);
+        g->transparent = -1;
+
+    +   if (g->w > STBI_MAX_DIMENSIONS) return stbi__err("too large","Very large image (corrupt?)");
+    +   if (g->h > STBI_MAX_DIMENSIONS) return stbi__err("too large","Very large image (corrupt?)");
+    +
+        if (comp != 0) *comp = 4;  // can't actually tell whether it's 3 or 4 until we parse the comments
+
+        if (is_info) return 1;
+    @@ -6930,6 +6961,9 @@ static float *stbi__hdr_load(stbi__context *s, int *x, int *y, int *comp, int re
+        token += 3;
+        width = (int) strtol(token, NULL, 10);
+
+    +   if (height > STBI_MAX_DIMENSIONS) return stbi__errpf("too large","Very large image (corrupt?)");
+    +   if (width > STBI_MAX_DIMENSIONS) return stbi__errpf("too large","Very large image (corrupt?)");
+    +
+        *x = width;
+        *y = height;
+
+    @@ -7244,6 +7278,9 @@ static void *stbi__pnm_load(stbi__context *s, int *x, int *y, int *comp, int req
+        if (!stbi__pnm_info(s, (int *)&s->img_x, (int *)&s->img_y, (int *)&s->img_n))
+           return 0;
+
+    +   if (s->img_y > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +   if (s->img_x > STBI_MAX_DIMENSIONS) return stbi__errpuc("too large","Very large image (corrupt?)");
+    +
+        *x = s->img_x;
+        *y = s->img_y;
+        if (comp) *comp = s->img_n;
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user merge-file -p --diff3 $MERGE/current.h $MERGE/base.h $MERGE/other.h
+  rc=0 timed_out=False
+  --- stdout elided: 252300 bytes, sha256 d3b5c868881d943e (file content — a hashed input) ---
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $DOWNSTREAM worktree add --quiet --detach $RUN/downstream_wt 712a47f946b98c30097eb1ada086ea00b18681ec
+  rc=0 timed_out=False
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $RUN/downstream_wt rev-parse HEAD
+  rc=0 timed_out=False
+  --- stdout ---
+    712a47f946b98c30097eb1ada086ea00b18681ec
+$ make clean   ($RUN/downstream_wt/C)
+  rc=0 timed_out=False
+  --- stdout ---
+    rm -f blurhash_encoder
+    rm -f blurhash_decoder
+$ make blurhash_encoder   ($RUN/downstream_wt/C)
+  rc=0 timed_out=False
+  --- stdout ---
+    cc -o blurhash_encoder encode_stb.c encode.c -lm -Ofast
+  --- stderr ---
+    clang: warning: argument '-Ofast' is deprecated; use '-O3 -ffast-math' for the same behavior, or '-O3' to enable only conforming optimizations [-Wdeprecated-ofast]
+    clang: warning: argument '-Ofast' is deprecated; use '-O3 -ffast-math' for the same behavior, or '-O3' to enable only conforming optimizations [-Wdeprecated-ofast]
+$ make clean   ($RUN/downstream_wt/C)
+  rc=0 timed_out=False
+  --- stdout ---
+    rm -f blurhash_encoder
+    rm -f blurhash_decoder
+$ make blurhash_encoder   ($RUN/downstream_wt/C)
+  rc=0 timed_out=False
+  --- stdout ---
+    cc -o blurhash_encoder encode_stb.c encode.c -lm -Ofast
+  --- stderr ---
+    clang: warning: argument '-Ofast' is deprecated; use '-O3 -ffast-math' for the same behavior, or '-O3' to enable only conforming optimizations [-Wdeprecated-ofast]
+    clang: warning: argument '-Ofast' is deprecated; use '-O3 -ffast-math' for the same behavior, or '-O3' to enable only conforming optimizations [-Wdeprecated-ofast]
+$ git --no-replace-objects -c core.hooksPath=/dev/null -c core.symlinks=false -c core.fsmonitor=false -c core.attributesFile=/dev/null -c protocol.allow=user -C $RUN/downstream_wt checkout -- C/stb_image.h
+  rc=0 timed_out=False
+$ $RUN/encoder_before 4 3 $PROBES/normal.bmp   ($RUN)
+  rc=0 timed_out=False
+  --- stdout ---
+    LmEx|s%BfL%N*FtKfNtQhCgJfQgJ
+$ $RUN/encoder_after 4 3 $PROBES/normal.bmp   ($RUN)
+  rc=0 timed_out=False
+  --- stdout ---
+    LmEx|s%BfL%N*FtKfNtQhCgJfQgJ
+$ $RUN/encoder_before 4 3 $PROBES/oversized.bmp   ($RUN)
+  rc=0 timed_out=False
+  --- stdout ---
+    L00000fQfQfQfQfQfQfQfQfQfQfQ
+$ $RUN/encoder_after 4 3 $PROBES/oversized.bmp   ($RUN)
+  rc=1 timed_out=False
+  --- stderr ---
+    Failed to load image file "$PROBES/oversized.bmp".
+$ $RUN/encoder_before 4 3 $PROBES/oversized.pnm   ($RUN)
+  rc=0 timed_out=False
+  --- stdout ---
+    L00000fQfQfQfQfQfQfQfQfQfQfQ
+$ $RUN/encoder_after 4 3 $PROBES/oversized.pnm   ($RUN)
+  rc=1 timed_out=False
+  --- stderr ---
+    Failed to load image file "$PROBES/oversized.pnm".
+$ cc --version
+  rc=0 timed_out=False
+  --- stdout ---
+    Apple clang version 17.0.0 (clang-1700.6.4.2)
+    Target: arm64-apple-darwin25.3.0
+    Thread model: posix
+    InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+$ make --version
+  rc=0 timed_out=False
+  --- stdout ---
+    GNU Make 3.81
+    Copyright (C) 2006  Free Software Foundation, Inc.
+    This is free software; see the source for copying conditions.
+    There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+    PARTICULAR PURPOSE.
+
+    This program built for i386-apple-darwin11.3.0
+$ git --version
+  rc=0 timed_out=False
+  --- stdout ---
+    git version 2.41.0
