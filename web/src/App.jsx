@@ -308,7 +308,7 @@ function Hunt({ onStats }) {
 
   return (
     <section className="screen" id="hunt">
-      <Head n="01" title="The hunt" sub="Pick a real upstream security fix. Mitos searches GitHub and reads the bytes of every copy it finds — there is no version number to match on, so it matches on the code itself." />
+      <Head n="01" title="The hunt" sub="The inverse question. Audit asks what is hiding in one repository; this asks who across GitHub is still carrying a given upstream fix. Nothing declares this library as a dependency, so identity and patch status are decided by reading each file's own bytes." />
 
       <div className="picker">
         {targets.map(t => (
@@ -323,15 +323,17 @@ function Hunt({ onStats }) {
         </button>
       </div>
 
-      <div className="counters">
-        <Stat v={classified && confirmable ? `${pct}%` : '—'}
-              l={confirmable ? 'of confirmed copies still unpatched'
-                             : 'candidates only — patch status not confirmable'} tone="bad" big />
-        <Stat v={stale || '—'} l="unpatched copies" tone="bad" />
-        <Stat v={immune || '—'} l="carrying the fix" tone="good" />
-        <Stat v={classified ? `${classified}` : '—'}
-              l={`confirmed implementations${refs ? ` · ${refs} refs excluded` : ''}`} />
-      </div>
+      {classified > 0 && (
+        <div className="counters">
+          <Stat v={confirmable ? `${pct}%` : '—'}
+                l={confirmable ? 'of confirmed copies still unpatched'
+                               : 'candidates only — patch status not confirmable'} tone="bad" big />
+          <Stat v={stale} l="unpatched copies" tone="bad" />
+          <Stat v={immune} l="carrying the fix" tone="good" />
+          <Stat v={classified}
+                l={`confirmed implementations${refs ? ` · ${refs} refs excluded` : ''}`} />
+        </div>
+      )}
 
       {(hits.length > 0 || running) && (
         <div className="filters">
