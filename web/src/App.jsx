@@ -267,6 +267,7 @@ function Hunt({ onStats }) {
   const [hits, setHits] = useState([])
   const [reading, setReading] = useState(null)
   const [fp, setFp] = useState(null)
+  const [crit, setCrit] = useState(null)
   const [logs, setLogs] = useState([])
   const [running, setRunning] = useState(false)
   const [done, setDone] = useState(false)
@@ -276,16 +277,21 @@ function Hunt({ onStats }) {
 
   useEffect(() => { fetch('/api/targets').then(r => r.json()).then(d => setTargets(d.targets)).catch(() => {}) }, [])
 
+  // Only CONFIRMED implementation copies count. References (callers, declaration-only
+  // headers) are shown but excluded from both numerator and denominator.
   const stale = hits.filter(h => h.status === 'STALE').length
   const immune = hits.filter(h => h.status === 'IMMUNE').length
+  const refs = hits.filter(h => h.status === 'REFERENCE').length
   const classified = stale + immune
   const pct = classified ? Math.round(100 * stale / classified) : 0
+  const confirmable = done?.confirmable !== false
   const shown = hits.filter(h => filter === 'ALL' ? true : h.status === filter)
 
   const run = () => {
     setHits([]); setLogs([]); setDone(false); setRunning(true); setReading(null); setTotal(0)
     openSSE(`/api/scan?max=24&target=${pick}`, (d) => {
       if (d.type === 'fingerprint') setFp(d)
+      if (d.type === 'criteria') setCrit(d)
       if (d.type === 'log' || d.type === 'phase') setLogs(l => [...l, d.text])
       if (d.type === 'total') setTotal(d.count)
       if (d.type === 'reading') setReading(d)
@@ -313,20 +319,23 @@ function Hunt({ onStats }) {
       </div>
 
       <div className="counters">
-        <Stat v={classified ? `${pct}%` : '—'} l="of live copies still unpatched" tone="bad" big />
-        <Stat v={stale || '—'} l="vulnerable" tone="bad" />
-        <Stat v={immune || '—'} l="already patched" tone="good" />
-        <Stat v={total ? `${hits.length}/${total}` : '—'} l="repos read" />
+        <Stat v={classified && confirmable ? `${pct}%` : '—'}
+              l={confirmable ? 'of confirmed copies still unpatched'
+                             : 'candidates only — patch status not confirmable'} tone="bad" big />
+        <Stat v={stale || '—'} l="unpatched copies" tone="bad" />
+        <Stat v={immune || '—'} l="carrying the fix" tone="good" />
+        <Stat v={classified ? `${classified}` : '—'}
+              l={`confirmed implementations${refs ? ` · ${refs} refs excluded` : ''}`} />
       </div>
 
       {(hits.length > 0 || running) && (
         <div className="filters">
-          {['ALL', 'STALE', 'IMMUNE'].map(f => (
+          {[['ALL', hits.length], ['STALE', stale], ['IMMUNE', immune], ['REFERENCE', refs]].map(([f, n]) => (
             <button key={f} className={filter === f ? 'on' : ''} onClick={() => setFilter(f)}>
-              {f.toLowerCase()} {f === 'ALL' ? hits.length : f === 'STALE' ? stale : immune}
+              {f.toLowerCase()} {n}
             </button>
           ))}
-          <span className="f-note mono">{fp ? `matching on ${fp.marker}()` : ''}</span>
+          <span className="f-note mono">{crit ? `impl markers: ${crit.identity.join(', ')} · fix: ${crit.fix_marker}` : ''}</span>
         </div>
       )}
 
@@ -340,6 +349,7 @@ function Hunt({ onStats }) {
             </div>
             {h.date && <div className="date mono">{h.date.slice(0, 10)}</div>}
             {h.predates && <div className="tag">predates fix</div>}
+            {h.why && <div className="why">{h.why}</div>}
             <div className={`verdict ${h.status.toLowerCase()}`}>{h.status}</div>
           </a>
         ))}
@@ -358,8 +368,13 @@ function Hunt({ onStats }) {
       {logs.length > 0 && <Term lines={logs} h={92} />}
       {done && (
         <p className="foot">
-          {stale} of {classified} live copies are missing this fix. Each verdict comes from reading
-          that repository&apos;s own bytes — none of them declare a version.
+          {stale} of {classified} <b>confirmed implementation copies</b> are missing this fix.
+          Every verdict comes from reading that repository&apos;s own bytes: a file counts only if it
+          contains the library&apos;s implementation internals, and counts as patched only if it
+          carries a symbol the fix itself introduced.
+          {refs > 0 && <> {refs} file{refs === 1 ? '' : 's'} that merely reference the library
+          {refs === 1 ? ' was' : ' were'} excluded rather than counted.</>}
+          {' '}None of them declare this as a dependency in any manifest.
         </p>
       )}
     </section>

@@ -376,3 +376,6 @@ a.card:hover{border-color:var(--line2);transform:translateX(2px)}
 .errbox{margin-top:18px;background:var(--bad-bg);border:1px solid var(--bad-line);
   border-radius:var(--rs);padding:16px 20px;font-size:13.5px;color:var(--dim);line-height:1.6}
 .errbox b{color:var(--bad);margin-right:6px}
+.card.reference{border-left-color:var(--faint);opacity:.62}
+.verdict.reference{background:var(--panel2);color:var(--dimmer)}
+.why{font-size:11px;color:var(--faint);max-width:270px;text-align:right;line-height:1.45}

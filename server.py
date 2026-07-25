@@ -272,8 +272,17 @@ class Handler(BaseHTTPRequestHandler):
                                    verbose=lambda m: self.emit({"type": "log", "text": m}))
             self.emit({"type": "total", "count": len(hits)})
 
-            stale = immune = 0
-            primary = fp.fix_markers[0] if fp.fix_markers else None
+            # Classify only CONFIRMED IMPLEMENTATION COPIES. A file that merely calls the
+            # library, or a declaration-only header, is a REFERENCE: real, but not the
+            # vulnerable code, so it must not move the numerator or the denominator.
+            # Patch status comes from a distinctive symbol the fix itself introduced —
+            # never a generic token like "CVE", which appears for unrelated reasons.
+            lib = next((l for l in VENDOR_MARKERS if l["name"] == tgt["id"]), None)
+            identity = lib["identity"] if lib else []
+            fix_marker = lib["fix_marker"] if lib else (fp.fix_markers[0] if fp.fix_markers else None)
+            self.emit({"type": "criteria", "identity": identity, "fix_marker": fix_marker})
+
+            stale = immune = reference = 0
             for i, h in enumerate(hits):
                 self.emit({"type": "reading", "repo": h.repo, "path": h.path, "i": i})
                 src = cve.fetch_source(h)
@@ -282,19 +291,26 @@ class Handler(BaseHTTPRequestHandler):
                                "status": "UNREADABLE", "i": i})
                     continue
                 text = src.decode("utf8", "replace")
-                has_ctx = fp.context_marker in text
-                has_fix = bool(primary and primary in text)
-                status = "IMMUNE" if has_fix else ("STALE" if has_ctx else "NO_MATCH")
-                date = cve.file_last_commit_iso(h.repo, h.path) if status != "NO_MATCH" else None
+                is_impl = bool(identity) and all(m in text for m in identity)
+                if not is_impl:
+                    reference += 1
+                    self.emit({"type": "hit", "repo": h.repo, "path": h.path, "status": "REFERENCE",
+                               "why": "calls or declares the library; not a copy of its implementation",
+                               "i": i, "stale": stale, "immune": immune, "reference": reference})
+                    continue
+                has_fix = bool(fix_marker and fix_marker in text)
+                status = "IMMUNE" if has_fix else "STALE"
+                date = cve.file_last_commit_iso(h.repo, h.path)
                 if status == "STALE":
                     stale += 1
-                elif status == "IMMUNE":
+                else:
                     immune += 1
                 self.emit({"type": "hit", "repo": h.repo, "path": h.path, "status": status,
                            "date": date, "predates": (date < fp.fix_date) if date else None,
-                           "i": i, "stale": stale, "immune": immune})
+                           "i": i, "stale": stale, "immune": immune, "reference": reference})
             self.emit({"type": "done", "stale": stale, "immune": immune,
-                       "classified": stale + immune})
+                       "reference": reference, "classified": stale + immune,
+                       "confirmable": bool(identity and fix_marker)})
         except Exception as e:
             self.emit({"type": "error", "text": f"{type(e).__name__}: {e}"})
             traceback.print_exc()
