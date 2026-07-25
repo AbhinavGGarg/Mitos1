@@ -311,15 +311,32 @@ class Handler(BaseHTTPRequestHandler):
             return self.emit({"type": "error", "text": "expected owner/name"})
         try:
             self.emit({"type": "phase", "text": f"auditing {repo}"})
+
+            # search every library concurrently — the searches are independent network calls
+            # and running them serially is the whole latency budget on a large repo
+            searches, lock = {}, threading.Lock()
+
+            def _search(lib):
+                try:
+                    r = cve.search_code(f'repo:{repo} {lib["symbol"]}', max_results=4,
+                                        verbose=lambda m: None)
+                except Exception as e:
+                    r = e
+                with lock:
+                    searches[lib["name"]] = r
+
+            ts = [threading.Thread(target=_search, args=(l,), daemon=True) for l in VENDOR_MARKERS]
+            for t in ts:
+                t.start()
+
             findings, checked = [], 0
             for lib in VENDOR_MARKERS:
                 self.emit({"type": "checking", "lib": lib["name"], "i": checked})
                 checked += 1
-                try:
-                    hits = cve.search_code(f'repo:{repo} {lib["symbol"]}', max_results=5,
-                                           verbose=lambda m: None)
-                except Exception as e:
-                    self.emit({"type": "log", "text": f"{lib['name']}: search failed ({e})"})
+                ts[checked - 1].join(timeout=25)
+                hits = searches.get(lib["name"])
+                if isinstance(hits, Exception) or hits is None:
+                    self.emit({"type": "log", "text": f"{lib['name']}: search unavailable ({hits or 'timeout'})"})
                     continue
                 for h in hits:
                     src = cve.fetch_source(h)
