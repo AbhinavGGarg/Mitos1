@@ -155,8 +155,8 @@ function Audit({ onDone }) {
       <Head n="00" title="Audit a repository"
             sub="Type any public GitHub repo. Mitos searches inside it for vendored copies of libraries with known security fixes, then reads the bytes of anything it finds to decide whether the fix is present." />
       <form className="auditbar" onSubmit={run}>
-        <span className="ab-pre mono">github.com/</span>
-        <input value={repo} placeholder="owner/name" spellCheck="false" autoCapitalize="off"
+        <input value={repo} placeholder="sphair/ClanLib" spellCheck="false" autoCapitalize="off"
+               autoComplete="off" autoFocus
                onChange={e => setRepo(
                  e.target.value
                    .replace(/^\s*(https?:\/\/)?(www\.)?github\.com\//i, '')  // paste a full URL
@@ -169,9 +169,10 @@ function Audit({ onDone }) {
         </button>
       </form>
       <div className="ab-hint">
-        try <button className="lnk" onClick={() => setRepo('micknoise/Maximilian')}>micknoise/Maximilian</button>
-        {' · '}<button className="lnk" onClick={() => setRepo('macieks/Tiny2D')}>macieks/Tiny2D</button>
-        {' · '}<button className="lnk" onClick={() => setRepo('icculus/sdlamp')}>icculus/sdlamp</button>
+        paste any repo or URL · try{' '}
+        <button className="lnk" type="button" onClick={() => setRepo('sphair/ClanLib')}>sphair/ClanLib</button>
+        {' · '}<button className="lnk" type="button" onClick={() => setRepo('micknoise/Maximilian')}>micknoise/Maximilian</button>
+        {' · '}<button className="lnk" type="button" onClick={() => setRepo('icculus/sdlamp')}>icculus/sdlamp</button>
       </div>
 
       {checking && <div className="checking mono">scanning for {checking}…</div>}

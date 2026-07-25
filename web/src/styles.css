@@ -87,11 +87,11 @@ button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit
 
 /* ── audit ── */
 .auditbar{display:flex;align-items:center;background:var(--panel);border:1px solid var(--line2);
-  border-radius:var(--r);padding:7px 7px 7px 20px;transition:all .18s;box-shadow:var(--shadow)}
+  border-radius:var(--r);padding:7px 7px 7px 22px;transition:all .18s;box-shadow:var(--shadow)}
 .auditbar:focus-within{border-color:var(--accent-line);box-shadow:0 0 0 4px var(--accent-soft),var(--shadow)}
 .ab-pre{color:var(--faint);font-size:14.5px;flex-shrink:0}
-.auditbar input{flex:1;background:none;border:0;outline:0;color:var(--fg);font-size:15px;
-  font-family:var(--mono);padding:14px 8px;min-width:0}
+.auditbar input{flex:1;background:none;border:0;outline:0;color:var(--fg);font-size:16px;
+  font-family:var(--mono);padding:15px 0;min-width:0;letter-spacing:-.01em}
 .auditbar input::placeholder{color:var(--faint)}
 .auditbar .run{position:static}
 .ab-hint{margin-top:13px;font-size:12.5px;color:var(--dimmer)}
