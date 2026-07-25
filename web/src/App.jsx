@@ -24,8 +24,8 @@ const useSSE = () => {
 }
 
 const SECTIONS = [
-  ['audit', 'Audit a repo'], ['hunt', 'The hunt'], ['target', 'The target'],
-  ['repair', 'The repair'], ['proof', 'The proof'], ['evidence', 'Evidence'],
+  ['audit', 'Audit a repo'], ['target', 'The target'], ['repair', 'The repair'],
+  ['proof', 'The proof'], ['evidence', 'Evidence'], ['scale', 'At scale'],
   ['monitor', 'Monitor'],
 ]
 
@@ -307,8 +307,8 @@ function Hunt({ onStats }) {
   useEffect(() => { onStats?.({ scanned: hits.length, stale }) }, [hits.length, stale])
 
   return (
-    <section className="screen" id="hunt">
-      <Head n="01" title="The hunt" sub="The inverse question. Audit asks what is hiding in one repository; this asks who across GitHub is still carrying a given upstream fix. Nothing declares this library as a dependency, so identity and patch status are decided by reading each file's own bytes." />
+    <section className="screen" id="scale">
+      <Head n="05" title="At scale" sub="Is one repository a fluke? This runs the inverse query — given an upstream fix, who across GitHub is still missing it. The same question a security team asks the morning a CVE lands: which of our repositories contain this code? Identity and patch status are decided by reading each file's own bytes." />
 
       <div className="picker">
         {targets.map(t => (
@@ -405,7 +405,7 @@ function TargetView({ target }) {
 
   return (
     <section className="screen" id="target">
-      <Head n="02" title="The target" sub="One of those copies, in detail. This is ClanLib's actual file at the pinned commit, fetched from the repository. It carries no declared dependency identity — nothing a package manager or SBOM tool can resolve." />
+      <Head n="01" title="The target" sub="One of those copies, in detail. This is ClanLib's actual file at the pinned commit, fetched from the repository. It carries no declared dependency identity — nothing a package manager or SBOM tool can resolve." />
       <div className="tgrid">
         <div className="panel">
           <div className="p-k">downstream</div>
@@ -472,7 +472,7 @@ function Repair({ target, res, logs, running, run }) {
 
   return (
     <section className="screen" id="repair">
-      <Head n="03" title="The repair" sub="A deterministic three-way merge — the general case, because it preserves whatever the downstream changed instead of overwriting it. Then a hard gate: the result must hash to an independently-reviewed known-correct postimage, or the run is refused."
+      <Head n="02" title="The repair" sub="A deterministic three-way merge — the general case, because it preserves whatever the downstream changed instead of overwriting it. Then a hard gate: the result must hash to an independently-reviewed known-correct postimage, or the run is refused."
             action={<button className={`run ${running ? 'busy' : ''}`} onClick={run} disabled={running}>
               {running ? 'repairing…' : res ? 'run again' : 'run repair'}</button>} />
 
@@ -535,7 +535,7 @@ function Proof({ res }) {
   const asan = probe?.detail?.match(/ERROR: AddressSanitizer: ([a-z-]+)/)?.[1]
   return (
     <section className="screen" id="proof">
-      <Head n="04" title="The proof" sub="An assertion versus a receipt. Both lanes were given the same file and the same crafted input." />
+      <Head n="03" title="The proof" sub="An assertion versus a receipt. Both lanes were given the same file and the same crafted input." />
       <div className="proof">
         <div className="lane agent">
           <div className="lane-h">The usual output <span className="illus">illustrative</span></div>
@@ -592,7 +592,7 @@ function Evidence({ res }) {
   useEffect(() => { fetch('/api/evidence').then(r => r.json()).then(setEv).catch(() => {}) }, [res])
   if (!res) return (
     <section className="screen" id="evidence">
-      <Head n="05" title="Evidence" sub="Run a repair and the full artifact bundle appears here." />
+      <Head n="04" title="Evidence" sub="Run a repair and the full artifact bundle appears here." />
       <div className="empty">no run yet</div>
     </section>
   )
@@ -602,7 +602,7 @@ function Evidence({ res }) {
 
   return (
     <section className="screen" id="evidence">
-      <Head n="05" title="Evidence" sub="What a reviewer receives. Including, explicitly, what was not proven." />
+      <Head n="04" title="Evidence" sub="What a reviewer receives. Including, explicitly, what was not proven." />
       <div className={`verdict-big ${res.verdict.toLowerCase()}`}>
         {res.verdict}
         <span>{c.verified_applied}/{c.upstream_hunks} hunks · {cov.behaviourally_verified_count}/{cov.reachable_count} reachable sites exercised</span>
@@ -718,11 +718,11 @@ export default function App() {
       <div className="app">
         <Hero stats={{ ...stats, verdict: res?.verdict?.replace('_', ' ') }} />
         <Audit onDone={setLastAudit} />
-        <Hunt onStats={setStats} />
         <TargetView target={target} />
         <Repair target={target} res={res} logs={logs} running={running} run={runRepair} />
         <Proof res={res} />
         <Evidence res={res} />
+        <Hunt onStats={setStats} />
         <Monitor lastAudit={lastAudit} />
         <footer className="foot-bar">
           <div>
