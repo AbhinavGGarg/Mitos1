@@ -18,8 +18,7 @@ import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
-ENGINE = os.environ.get("MITOS_ENGINE", os.path.join(_HERE, "engine"))
+ENGINE = os.environ.get("MITOS_ENGINE", "/Users/abhinavgarg/Wizard Hackathon/patchdna")
 sys.path.insert(0, ENGINE)
 
 from mitos import cve, repair  # noqa: E402
@@ -82,6 +81,27 @@ def _sse(payload: dict) -> bytes:
     return f"data: {json.dumps(payload)}\n\n".encode()
 
 
+# ---- watchlist: which repos a signed-in user has asked us to monitor -------------------
+WATCH_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "watchlist.json")
+_watch_lock = threading.Lock()
+
+
+def _load_watch() -> dict:
+    try:
+        with open(WATCH_DB) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _save_watch(db: dict):
+    with _watch_lock:
+        tmp = WATCH_DB + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump(db, f, indent=2)
+        os.replace(tmp, WATCH_DB)
+
+
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
 
@@ -105,7 +125,35 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json({"targets": TARGETS})
         if u.path == "/api/audit":
             return self.stream_audit(parse_qs(u.query))
+        if u.path == "/api/watchlist":
+            return self.send_json({"watching": _load_watch().get(
+                (parse_qs(u.query).get("user") or ["anon"])[0], [])})
         return self.serve_static(u.path)
+
+    def do_POST(self):
+        u = urlparse(self.path)
+        if u.path != "/api/watch":
+            return self.send_json({"error": "not found"}, 404)
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+            body = json.loads(self.rfile.read(n) or b"{}")
+        except Exception:
+            return self.send_json({"error": "bad json"}, 400)
+        user = (body.get("user") or "anon")[:120]
+        repo = (body.get("repo") or "").strip()[:200]
+        if not repo:
+            return self.send_json({"error": "repo required"}, 400)
+        db = _load_watch()
+        entries = db.setdefault(user, [])
+        entries = [e for e in entries if e["repo"] != repo]        # replace, don't duplicate
+        if not body.get("remove"):
+            entries.append({"repo": repo,
+                            "findings": body.get("findings") or [],
+                            "vulnerable": int(body.get("vulnerable") or 0),
+                            "added": body.get("at") or ""})
+        db[user] = entries
+        _save_watch(db)
+        return self.send_json({"watching": entries})
 
     # ---------------- helpers ----------------
     def send_json(self, obj, code=200):

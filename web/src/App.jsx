@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { HexclaveGate, useMaybeUser, signIn, signOut, hexclaveEnabled } from './hexclave.jsx'
 
 /* Every value rendered here comes from a live engine call.
    /api/scan  — real GitHub code search + real per-copy byte reads
@@ -25,10 +26,102 @@ const useSSE = () => {
 const SECTIONS = [
   ['audit', 'Audit a repo'], ['hunt', 'The hunt'], ['target', 'The target'],
   ['repair', 'The repair'], ['proof', 'The proof'], ['evidence', 'Evidence'],
+  ['monitor', 'Monitor'],
 ]
 
+/* ── 06 · MONITOR (accounts + email via Hexclave) ──────────── */
+function Monitor({ lastAudit }) {
+  const user = useMaybeUser()
+  const [list, setList] = useState([])
+  const [busy, setBusy] = useState(false)
+  const uid = user?.id || user?.primaryEmail || null
+
+  const load = (u) => fetch(`/api/watchlist?user=${encodeURIComponent(u)}`)
+    .then(r => r.json()).then(d => setList(d.watching || [])).catch(() => {})
+  useEffect(() => { if (uid) load(uid) }, [uid])
+
+  const watch = async (repo, findings, vulnerable, remove) => {
+    if (!uid) return signIn()
+    setBusy(true)
+    try {
+      const r = await fetch('/api/watch', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user: uid, repo, findings, vulnerable, remove,
+                               at: new Date().toISOString() }),
+      })
+      const d = await r.json(); setList(d.watching || [])
+    } finally { setBusy(false) }
+  }
+
+  const watched = new Set(list.map(w => w.repo))
+  const totalVuln = list.reduce((n, w) => n + (w.vulnerable || 0), 0)
+
+  return (
+    <section className="screen" id="monitor">
+      <Head n="06" title="Monitor"
+            sub="A scan is a moment. The product is the watch: tell Mitos which repositories are yours, and when upstream ships a security fix for something you vendored, you get a verified patch — not a notification telling you to go read a CVE." />
+
+      {!hexclaveEnabled ? (
+        <div className="empty">accounts not configured — set VITE_HEXCLAVE_PROJECT_ID to enable monitoring</div>
+      ) : !user ? (
+        <div className="signin-card">
+          <div>
+            <b>Sign in to watch your repositories</b>
+            <span>Accounts and delivery are handled by Hexclave. We store the repository name and its last audit result — nothing else.</span>
+          </div>
+          <button className="btn primary" onClick={signIn}>Sign in</button>
+        </div>
+      ) : (
+        <>
+          <div className="who">
+            <div className="avatar">{(user.displayName || user.primaryEmail || '?')[0].toUpperCase()}</div>
+            <div>
+              <b>{user.displayName || user.primaryEmail}</b>
+              <span>{list.length} {list.length === 1 ? 'repository' : 'repositories'} watched · {totalVuln} carrying an unpatched copy</span>
+            </div>
+            <button className="btn ghost" onClick={() => signOut(user)}>Sign out</button>
+          </div>
+
+          {lastAudit?.repo && (
+            <div className="watch-cta">
+              <span>Last audited <b className="mono">{lastAudit.repo}</b></span>
+              <button className="btn primary" disabled={busy}
+                      onClick={() => watch(lastAudit.repo, lastAudit.findings, lastAudit.vulnerable,
+                                           watched.has(lastAudit.repo))}>
+                {watched.has(lastAudit.repo) ? 'Stop watching' : 'Watch this repo'}
+              </button>
+            </div>
+          )}
+
+          <div className="feed">
+            {list.map((w, i) => (
+              <div key={i} className={`card ${w.vulnerable ? 'stale' : 'immune'}`}>
+                <div className="card-main">
+                  <div className="repo">{w.repo}</div>
+                  <div className="path mono">
+                    {w.vulnerable ? `${w.vulnerable} vendored ${w.vulnerable === 1 ? 'copy' : 'copies'} missing a fix`
+                                  : 'no unpatched copies at last audit'}
+                  </div>
+                </div>
+                <div className={`verdict ${w.vulnerable ? 'stale' : 'immune'}`}>
+                  {w.vulnerable ? 'WATCHING' : 'CLEAR'}
+                </div>
+              </div>
+            ))}
+            {!list.length && <div className="empty">audit a repository above, then add it here</div>}
+          </div>
+          <p className="hnote">
+            Delivery requires the Emails app enabled on the Hexclave project. Watch state is stored
+            server-side today; scheduled re-checks are the obvious next step and are not running yet.
+          </p>
+        </>
+      )}
+    </section>
+  )
+}
+
 /* ── 00 · AUDIT YOUR REPO ──────────────────────────────────── */
-function Audit() {
+function Audit({ onDone }) {
   const [repo, setRepo] = useState('')
   const [rows, setRows] = useState([])
   const [skipped, setSkipped] = useState([])
@@ -46,7 +139,7 @@ function Audit() {
       if (d.type === 'checking') setChecking(d.lib)
       if (d.type === 'log') setSkipped(s => [...s, d.text])
       if (d.type === 'finding') setRows(x => [...x, d])
-      if (d.type === 'done') setDone(d)
+      if (d.type === 'done') { setDone(d); onDone?.(d) }
     }, () => { setRunning(false); setChecking(null) })
   }
 
@@ -565,6 +658,7 @@ export default function App() {
   const [logs, setLogs] = useState([])
   const [running, setRunning] = useState(false)
   const [stats, setStats] = useState({})
+  const [lastAudit, setLastAudit] = useState(null)
   const [active, setActive] = useState('')
   const openSSE = useSSE()
 
@@ -587,16 +681,17 @@ export default function App() {
   }
 
   return (
-    <>
+    <HexclaveGate>
       <Nav active={active} />
       <div className="app">
         <Hero stats={{ ...stats, verdict: res?.verdict?.replace('_', ' ') }} />
-        <Audit />
+        <Audit onDone={setLastAudit} />
         <Hunt onStats={setStats} />
         <TargetView target={target} />
         <Repair target={target} res={res} logs={logs} running={running} run={runRepair} />
         <Proof res={res} />
         <Evidence res={res} />
+        <Monitor lastAudit={lastAudit} />
         <footer className="foot-bar">
           <div>
             <b>Provenance.</b> The Mitos engine is pre-existing open-source work, used here as a
@@ -608,6 +703,6 @@ export default function App() {
           </div>
         </footer>
       </div>
-    </>
+    </HexclaveGate>
   )
 }
