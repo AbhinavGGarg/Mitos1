@@ -58,8 +58,14 @@ function Audit() {
             sub="Type any public GitHub repo. Mitos searches inside it for vendored copies of libraries with known security fixes, then reads the bytes of anything it finds to decide whether the fix is present." />
       <form className="auditbar" onSubmit={run}>
         <span className="ab-pre mono">github.com/</span>
-        <input value={repo} onChange={e => setRepo(e.target.value)} placeholder="owner/name"
-               spellCheck="false" autoCapitalize="off" />
+        <input value={repo} placeholder="owner/name" spellCheck="false" autoCapitalize="off"
+               onChange={e => setRepo(
+                 e.target.value
+                   .replace(/^\s*(https?:\/\/)?(www\.)?github\.com\//i, '')  // paste a full URL
+                   .replace(/\.git$/i, '')                                   // or a clone URL
+                   .replace(/^\/+/, '')
+                   .trimStart()
+               )} />
         <button className={`run ${running ? 'busy' : ''}`} disabled={running || !repo.includes('/')}>
           {running ? 'auditing…' : 'audit'}
         </button>
