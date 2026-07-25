@@ -204,7 +204,7 @@ function Audit({ onDone }) {
           {vuln.length ? (
             <>
               <b>{vuln.length} vendored {vuln.length === 1 ? 'copy is' : 'copies are'} missing a published security fix</b>
-              <span>in <span className="mono">{done.repo}</span>. No package manager can see these — the files carry no version. Mitos can transplant the fix and prove the bug is gone.</span>
+              <span>in <span className="mono">{done.repo}</span>. No package manager can see these — nothing declares them as a dependency, so there is no coordinate to match against an advisory. Mitos can transplant the fix and prove the bug is gone.</span>
             </>
           ) : done.findings ? (
             <><b>Clean.</b><span>{done.findings} vendored {done.findings === 1 ? 'copy' : 'copies'} found in <span className="mono">{done.repo}</span>, all carrying the upstream fix.</span></>
