@@ -18,7 +18,8 @@ import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
-ENGINE = os.environ.get("MITOS_ENGINE", "/Users/abhinavgarg/Wizard Hackathon/patchdna")
+_HERE = os.path.dirname(os.path.abspath(__file__))
+ENGINE = os.environ.get("MITOS_ENGINE", os.path.join(_HERE, "engine"))
 sys.path.insert(0, ENGINE)
 
 from mitos import cve, repair  # noqa: E402
