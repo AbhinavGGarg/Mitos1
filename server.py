@@ -60,10 +60,19 @@ VENDOR_MARKERS = [
      "identity": ["compute_codewords", "start_decoder", "vorbis_decode_packet"],
      "cves": "CVE-2019-13217..13223 (7)", "severity": "high",
      "fix_url": "https://github.com/nothings/stb/commit/98fdfc6df88b1e34a736d5e126e6c8139c8de1a6"},
-    {"name": "stb_image", "symbol": "stbi_load_from_memory", "fix_marker": "STBI_MAX_DIMENSIONS",
+    # stbi__addints_valid is an internal function the fix introduced. Preferred over
+    # STBI_MAX_DIMENSIONS, which is a user-settable macro a project could define without
+    # ever taking the patch. Verified absent in parent 96fe76c2, present in the fix and at HEAD.
+    {"name": "stb_image", "symbol": "stbi_load_from_memory", "fix_marker": "stbi__addints_valid",
      "identity": ["stbi__context", "stbi__jpeg_decode_block", "stbi__parse_png_file"],
-     "cves": "decompression-bomb hardening", "severity": "medium",
-     "fix_url": "https://github.com/nothings/stb/commit/d60594847ecca4553b18e7607d01328c58d95a42"},
+     "cves": "signed integer overflow in decode paths", "severity": "high",
+     "fix_url": "https://github.com/nothings/stb/commit/47164e4086c1349ef3042fb04e0f7f7ceaf1fcee"},
+    # lodepng_chunk_type_name_valid is a real function introduced by the fix, not a comment.
+    # Verified absent in parent, present in the fix and at HEAD.
+    {"name": "lodepng", "symbol": "lodepng_decode32", "fix_marker": "lodepng_chunk_type_name_valid",
+     "identity": ["unfilterScanline", "readChunk_PLTE", "lodepng_inflate"],
+     "cves": "invalid chunk type names accepted", "severity": "medium",
+     "fix_url": "https://github.com/lvandeve/lodepng/commit/5a2e751"},
 ]
 
 # What each CVE in the stb_vorbis cluster actually is, and where the fix lands.

@@ -1,0 +1,979 @@
+{
+  "stb_image": {
+    "fix": "nothings/stb@47164e40 signed integer overflow checks (2022-11-29)",
+    "marker": "stbi__addints_valid",
+    "marker_verified": "marker absent in parent 96fe76c2, present in 47164e40 and in HEAD",
+    "identity_markers": [
+      "stbi__context",
+      "stbi__jpeg_decode_block",
+      "stbi__parse_png_file"
+    ],
+    "confirmed_copies": 91,
+    "unpatched": 84,
+    "patched": 7,
+    "references_excluded": 58,
+    "unreadable": 0,
+    "unpatched_repos": [
+      {
+        "repo": "woltapp/blurhash",
+        "path": "C/stb_image.h"
+      },
+      {
+        "repo": "magnificus/Ray",
+        "path": "src/stb.h"
+      },
+      {
+        "repo": "alektron/TextureOrigins",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "lfb-1/CG-Opengl-Final-Work",
+        "path": "lib/stb_image.h"
+      },
+      {
+        "repo": "pengyz/Breakout",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "rolandbernard/chat",
+        "path": "src/image.h"
+      },
+      {
+        "repo": "zeyonaut/protogeo",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "warmist/PixelDance",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "revery-ui/revery",
+        "path": "include/stb_image.h"
+      },
+      {
+        "repo": "crystal-data/spyglass",
+        "path": "ext/sod_img_reader.h"
+      },
+      {
+        "repo": "nekoffski/stb",
+        "path": "stb.h"
+      },
+      {
+        "repo": "thi-ng/img2array",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "Artintrex/Ikaros2D",
+        "path": "Libs/stb_image.h"
+      },
+      {
+        "repo": "drewdj/OpenGL--TFG.PlanetGeneration",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "archer1357/Offline-Raytracer",
+        "path": "stb_image.c"
+      },
+      {
+        "repo": "iaswtw/leela",
+        "path": "leela/stbi_image.h"
+      },
+      {
+        "repo": "jamesmcgill/randocha",
+        "path": "source/stb_image.h"
+      },
+      {
+        "repo": "flybikeGx/GL_Playground",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "r-lyeh-archived/pug",
+        "path": "tools/deps/stb_image.c"
+      },
+      {
+        "repo": "NicolasSegl/opengl-minecraft",
+        "path": "src/stb.h"
+      },
+      {
+        "repo": "itrabbit/react-native-webgl2",
+        "path": "cpp/stb_image.h"
+      },
+      {
+        "repo": "mkkellogg/Core",
+        "path": "image/STBImage.h"
+      },
+      {
+        "repo": "THUNDERGROOVE/dogma-editor",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "akadjoker/IrrlichtGameObject",
+        "path": "src/core/stb_image.c"
+      },
+      {
+        "repo": "JC01111/Computer-Graphics-Projects",
+        "path": "Basic/stb_image.h"
+      },
+      {
+        "repo": "DCubix/GUI",
+        "path": "stb.h"
+      },
+      {
+        "repo": "ianhuezo/PacManGL",
+        "path": "PacMan/stb_image.h"
+      },
+      {
+        "repo": "JayC-SF/OpenGL-Tennis-Pong-Game",
+        "path": "include/stb_image.h"
+      },
+      {
+        "repo": "DPCEKY/systolic-array",
+        "path": "stb_image_read.h"
+      },
+      {
+        "repo": "mattiaisgro/outlawengine",
+        "path": "src/stdbi.h"
+      },
+      {
+        "repo": "warrengalyen/ocular",
+        "path": "demo/stb_image.h"
+      },
+      {
+        "repo": "stac21/OpenGL-Demos",
+        "path": "Bloom/stb_image.h"
+      },
+      {
+        "repo": "anjoeaj/Snow-House-OpenGL",
+        "path": "GL Exp/stb_image.h"
+      },
+      {
+        "repo": "misterk99/Empires",
+        "path": "Empires/stb_image.h"
+      },
+      {
+        "repo": "CobaltXII/orb",
+        "path": "stb/stb_image.c"
+      },
+      {
+        "repo": "JusSn/LearnOpenGL",
+        "path": "OpenGL1/stb_image_.h"
+      },
+      {
+        "repo": "stac21/OpenGL-Demos",
+        "path": "Instancing/stb_image.h"
+      },
+      {
+        "repo": "harry7557558/Graphics",
+        "path": "libraries/stb_image.h"
+      },
+      {
+        "repo": "wanttobeno/sod",
+        "path": "sod_img_reader.h"
+      },
+      {
+        "repo": "Ubpa/UData",
+        "path": "UBL/stb_image.h"
+      },
+      {
+        "repo": "codenamecpp/carnage3d",
+        "path": "src/std_image.h"
+      },
+      {
+        "repo": "HyperLan-git/midihex",
+        "path": "lib/stbi/stb_image.c"
+      },
+      {
+        "repo": "kruseborn/mongoose",
+        "path": "libs/stb/stb_image.h"
+      },
+      {
+        "repo": "martincohen/Punity",
+        "path": "lib/stb_image.h"
+      },
+      {
+        "repo": "loic-hpp/OpenGl",
+        "path": "Lab_03/src/stb_image.h"
+      },
+      {
+        "repo": "jw7914/Project1_GameProg",
+        "path": "Project1/stb_image.h"
+      },
+      {
+        "repo": "zombietype/Valiant",
+        "path": "stbi/stb_image.h"
+      },
+      {
+        "repo": "xtl-murphy/StitchesSoftRenderer",
+        "path": "lib/stb/stb_image.c"
+      },
+      {
+        "repo": "danzeng8/MultiTopo",
+        "path": "MultiTopo/stb_image.h"
+      },
+      {
+        "repo": "Dangeroustuber/OpenGL-Pacman3D",
+        "path": "include/stb_image.h"
+      },
+      {
+        "repo": "lewisfish/fortran_stb_image",
+        "path": "src/stb_image.c"
+      },
+      {
+        "repo": "pendingchaos/WIP24",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "erickTornero/Computer-Graphics",
+        "path": "Textures/stb_image.h"
+      },
+      {
+        "repo": "elvees/mcom02-delcore30m-tools",
+        "path": "stb/stb_image.h"
+      },
+      {
+        "repo": "PaoloMazzon/JamEngine",
+        "path": "src/stb_image.c"
+      },
+      {
+        "repo": "anton-tchekov/lambda-engine",
+        "path": "util/lib/image.h"
+      },
+      {
+        "repo": "Ziv-spec/randomfun",
+        "path": "d3d11/stb_image.h"
+      },
+      {
+        "repo": "norton-swz/OpenGLTraining",
+        "path": "tinygltf/stb_image.h"
+      },
+      {
+        "repo": "Mikepicker/opengl-racing",
+        "path": "engine/stb_image.h"
+      },
+      {
+        "repo": "qingqibing/3dtiles",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "death/imcl",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "niley1nov/cascaded-exponential-shadow-mapping",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "Twinklebear/zed-vive-mr",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "panluDreamer/PBR-Render-Demo",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "shygoo/ys-project",
+        "path": "tools/src/stb_image.h"
+      },
+      {
+        "repo": "DanZaidan/break_arcade_games_out",
+        "path": "code/stb_image.h"
+      },
+      {
+        "repo": "Forceflow/cuda_raytracer",
+        "path": "src/libs/stb_image.h"
+      },
+      {
+        "repo": "isLouisHsu/DarkerNet",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "LionOfJewdah/RealTimeObjectDetection",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "James-Whitney/Voyager",
+        "path": "ext/stb/stb_image.h"
+      },
+      {
+        "repo": "AlerianEmperor/Resource",
+        "path": "FlatBVH/stb_image.h"
+      },
+      {
+        "repo": "HuangJiaLian/Image-Processing-Basic",
+        "path": "04_Edge/stb_image.h"
+      },
+      {
+        "repo": "Twinklebear/osp-icet",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "ankitsinghkushwah/Ray-Tracer",
+        "path": "Ray Tracer/stb_image.h"
+      },
+      {
+        "repo": "SimonWameling/3D-Renderer",
+        "path": "std_image.h"
+      },
+      {
+        "repo": "elektito/gravity",
+        "path": "stb_image.h"
+      },
+      {
+        "repo": "woodenToaster/gamedev",
+        "path": "stb/stb_image.h"
+      },
+      {
+        "repo": "tizian/Spinning-Top-Simulation",
+        "path": "ext/stb/stb_image.h"
+      },
+      {
+        "repo": "devpack/opengl-ffmpeg-video",
+        "path": "stb/stb_image.h"
+      },
+      {
+        "repo": "ShirokoSama/ShadingSandbox",
+        "path": "tools/stb_image.h"
+      },
+      {
+        "repo": "snowkit/linc_stb",
+        "path": "lib/stb_image.h"
+      },
+      {
+        "repo": "Tremus/sokol_triangle",
+        "path": "src/stb_image.h"
+      },
+      {
+        "repo": "iAmKoldyn/Games",
+        "path": "_stb/stb_image.h"
+      },
+      {
+        "repo": "RowXV/CG-PF-TE",
+        "path": "PR/PR/stb_image.h"
+      }
+    ],
+    "patched_repos": [
+      {
+        "repo": "snarmph/ulivo",
+        "path": "src/ulivo.c"
+      },
+      {
+        "repo": "salchaD-27/cGraphicalManipulator",
+        "path": "src/stb_image.c"
+      },
+      {
+        "repo": "servo/rust-stb-image",
+        "path": "src/stb_image.c"
+      },
+      {
+        "repo": "JacobCrabill/zig-stb-image",
+        "path": "src/stb_image.c"
+      },
+      {
+        "repo": "SYSTEM-SZ/KB666666",
+        "path": "src/ImageDecoder.c"
+      },
+      {
+        "repo": "nyr24/stb_c3",
+        "path": "src/stb_image.c"
+      },
+      {
+        "repo": "Auria-dev/software-renderer",
+        "path": "src/stb_image.h"
+      }
+    ]
+  },
+  "stb_vorbis": {
+    "fix": "nothings/stb@98fdfc6d CVE-2019-13217..13223 (2019-08-09)",
+    "marker": "ForAllSecure",
+    "marker_verified": "marker absent in parent c72a95d7, present in 98fdfc6d and in HEAD",
+    "identity_markers": [
+      "compute_codewords",
+      "start_decoder",
+      "vorbis_decode_packet"
+    ],
+    "confirmed_copies": 62,
+    "unpatched": 24,
+    "patched": 38,
+    "references_excluded": 15,
+    "unreadable": 0,
+    "unpatched_repos": [
+      {
+        "repo": "treeform/slappy",
+        "path": "src/slappy/vorbis.c"
+      },
+      {
+        "repo": "CreativeCodingLab/Polyphorm",
+        "path": "cpplib/stb_vorbis.c"
+      },
+      {
+        "repo": "RupertBenWiser/WizardGame",
+        "path": "libs/STB/stb_vorbis.c"
+      },
+      {
+        "repo": "Snowapril/Procedural-Terrain-Estimator",
+        "path": "Renderer/dependencies/stb/stb_vorbis.c"
+      },
+      {
+        "repo": "tcottrill/vectrex-emu",
+        "path": "emulator/sys_audio/stb_vorbis.c"
+      },
+      {
+        "repo": "insaan21/EQ-plugin",
+        "path": "Maximilian-master/stb_vorbis.c"
+      },
+      {
+        "repo": "gliptic/liero",
+        "path": "src/tl/vorbis.c"
+      },
+      {
+        "repo": "AuroraJohansen/Graphics-Visualization",
+        "path": "project/lib/stb/stb_vorbis.c"
+      },
+      {
+        "repo": "twohoursonelife/OneLife",
+        "path": "gameSource/stb_vorbis.c"
+      },
+      {
+        "repo": "RedcraneStudio/redcrane-engine",
+        "path": "soloud/src/audiosource/wav/stb_vorbis.c"
+      },
+      {
+        "repo": "micknoise/Maximilian",
+        "path": "src/libs/stb_vorbis.c"
+      },
+      {
+        "repo": "martincohen/Punity",
+        "path": "lib/stb_vorbis.c"
+      },
+      {
+        "repo": "BareRose/atomix",
+        "path": "libs/stb_vorbis.h"
+      },
+      {
+        "repo": "ACDBio/sfsystem_withstim",
+        "path": "lib/AudioLibs/libs/stb_vorbis.c"
+      },
+      {
+        "repo": "s2291592/LineVulReplication",
+        "path": "MBUPart/c_files/CVE-2019-13223.c"
+      },
+      {
+        "repo": "rwkcommunity/rwkgame",
+        "path": "RWK_Source/Framework/OS/WASM/xmp/src/depackers/vorbis.c"
+      },
+      {
+        "repo": "Kelan0/Planet-Renderer",
+        "path": "lib/STB_image/stb_vorbis.c"
+      },
+      {
+        "repo": "bmewj/bmjap",
+        "path": "src/stb_vorbis.c"
+      },
+      {
+        "repo": "wbb1977/modo_android",
+        "path": "modo/src/main/jni/xmp/depackers/vorbis.c"
+      },
+      {
+        "repo": "SophieHYe/PreciseBugs",
+        "path": "CVEs/CVE-2019-13223/buggy/stb_vorbis.c"
+      },
+      {
+        "repo": "mcclure/bitbucket-backup",
+        "path": "repos/nomadtest/contents/desktop/plaid/codec_stb/stb_vorbis.c"
+      },
+      {
+        "repo": "BeagleBoom/BeagleAudio",
+        "path": "maximilian/stb_vorbis.c"
+      },
+      {
+        "repo": "jwatte/moneypit_v_for_victory",
+        "path": "stb/stb_vorbis.c"
+      },
+      {
+        "repo": "Memorix101/space_invaders_project",
+        "path": "glfw3-space-invaders/include/stb/stb_vorbis.c"
+      }
+    ],
+    "patched_repos": [
+      {
+        "repo": "mackron/miniaudio",
+        "path": "extras/stb_vorbis.c"
+      },
+      {
+        "repo": "DavidNexuss/VJ",
+        "path": "lib/ogg/ogg.c"
+      },
+      {
+        "repo": "Daft-Freak/32blit-music-player",
+        "path": "stb_vorbis.c"
+      },
+      {
+        "repo": "r-lyeh/v1",
+        "path": "2023/2023.01/split/split/3rd_stb_vorbis.h"
+      },
+      {
+        "repo": "HunoPPC-NG/Dhewm3-for-EGL_Wrap-AmigaOS4",
+        "path": "neo/sound/stb_vorbis.h"
+      },
+      {
+        "repo": "lasagnaphil/thesystem-cpp-public",
+        "path": "engine/stb/stb_vorbis.c"
+      },
+      {
+        "repo": "fredliuchn/SimpleVulkan",
+        "path": "Dependency/stb/stb_vorbis.c"
+      },
+      {
+        "repo": "YoannSo/Moteur_Lancer_De_Rayon",
+        "path": "ISIR_tp/lib/stb/stb_vorbis.c"
+      },
+      {
+        "repo": "DirectXTK/VulkanEngine",
+        "path": "Include/stb-master/stb_vorbis.c"
+      },
+      {
+        "repo": "irmen/pyminiaudio",
+        "path": "miniaudio/stb_vorbis.c"
+      },
+      {
+        "repo": "BIDMYLIFE/ai-pet",
+        "path": "stt/whisper.cpp/examples/stb_vorbis.c"
+      },
+      {
+        "repo": "demurzasty/HolyGrail",
+        "path": "lib/stb/include/stb_vorbis.c"
+      },
+      {
+        "repo": "JunRong19/Maple-Engine",
+        "path": "MapleEngine/lib/stb-master/stb_vorbis.c"
+      },
+      {
+        "repo": "BorjaPiruXx/InformaticaGrafica",
+        "path": "src/src/deps/stb/stb_vorbis.c"
+      },
+      {
+        "repo": "oho3473/GraphicsDemo",
+        "path": "GraphicsEngine/include/stb_vorbis.c"
+      },
+      {
+        "repo": "sergioseb/Dodgeball_Masters",
+        "path": "opengl/stb/stb_vorbis.c"
+      },
+      {
+        "repo": "Leeroy-mt/OpenDuckGame",
+        "path": "FNA/lib/FAudio/src/stb_vorbis.h"
+      },
+      {
+        "repo": "r-lyeh/kit",
+        "path": "kits/kit.al/3rd_stb_vorbis.c"
+      },
+      {
+        "repo": "Relintai/sfw",
+        "path": "modules/audio/3rd_stb_vorbis.h"
+      },
+      {
+        "repo": "oceanthunder/Principia",
+        "path": "SDLPoP/src/stb_vorbis.c"
+      },
+      {
+        "repo": "ziacko/Foundation",
+        "path": "lib/soloud/include/src/audiosource/wav/stb_vorbis.c"
+      },
+      {
+        "repo": "calfCode/ffmpegSimplePlayer",
+        "path": "app/jni/SDL2_mixer/src/codecs/stb_vorbis/stb_vorbis.h"
+      },
+      {
+        "repo": "aleksandrturlak/Pengine-1.0",
+        "path": "Pengine/Source/Audio/vorbis.h"
+      },
+      {
+        "repo": "canoi12/selene",
+        "path": "third/stb_vorbis.h"
+      },
+      {
+        "repo": "carottX/ics2024",
+        "path": "navy-apps/libs/libvorbis/src/stb_vorbis.c"
+      },
+      {
+        "repo": "jurky123/VCL_Final",
+        "path": "VCL_Final/include/stb_vorbis.c"
+      },
+      {
+        "repo": "spotUP/DEViLBOX",
+        "path": "pxtone-wasm/src/stb_vorbis/stb_vorbis.h"
+      },
+      {
+        "repo": "sezero/SDL2-OS2",
+        "path": "packages/SDL2_sound/src/stb_vorbis.h"
+      },
+      {
+        "repo": "iceboundworm8111/Project-Engine",
+        "path": "ProjectEngine/contrib/include/stb_vorbis.c"
+      },
+      {
+        "repo": "r-lyeh/v1",
+        "path": "2022/2022.12/split/split/3rd_stb_vorbis.h"
+      },
+      {
+        "repo": "aleksandrturlak/OpenGL_Engine",
+        "path": "Doom/src/Doom/Audio/vorbis.h"
+      },
+      {
+        "repo": "schsiung/llm_testdata",
+        "path": "CVEdata/C/CVE-2019-13221/stb_vorbis_after.c"
+      },
+      {
+        "repo": "xx0422/projects2",
+        "path": "C++/sfw/split/sfw/audio/3rd_stb_vorbis.h"
+      },
+      {
+        "repo": "Vinnih-1/Kipty",
+        "path": "whisper_cpp/examples/stb_vorbis.c"
+      },
+      {
+        "repo": "Xbox-Homebrew/SDLPoP",
+        "path": "src/stb_vorbis.c"
+      },
+      {
+        "repo": "divideconcept/FluidLite",
+        "path": "stb/stb_vorbis.c"
+      },
+      {
+        "repo": "doclulleNPC/BuddyDoom",
+        "path": "files/stb_vorbis.c"
+      },
+      {
+        "repo": "developeryesgames/nuvie-korean",
+        "path": "sound/mixer/decoder/stb_vorbis.c"
+      }
+    ]
+  },
+  "lodepng": {
+    "fix": "lvandeve/lodepng@5a2e751 reject invalid chunk type names",
+    "marker": "lodepng_chunk_type_name_valid",
+    "marker_verified": "marker absent in parent, present in 5a2e751 and in HEAD; it is a real function definition, not a comment",
+    "identity_markers": [
+      "unfilterScanline",
+      "readChunk_PLTE",
+      "lodepng_inflate"
+    ],
+    "confirmed_copies": 77,
+    "unpatched": 74,
+    "patched": 3,
+    "references_excluded": 33,
+    "unreadable": 0,
+    "unpatched_repos": [
+      {
+        "repo": "openmv/openmv",
+        "path": "lib/imlib/lodepng.c"
+      },
+      {
+        "repo": "notsecure/uTox",
+        "path": "png/png.c"
+      },
+      {
+        "repo": "RefindPlusRepo/RefindPlus",
+        "path": "libeg/lodepng.c"
+      },
+      {
+        "repo": "arjan/pixels",
+        "path": "c_src/ext/lodepng.c"
+      },
+      {
+        "repo": "amaitou/Cub3d",
+        "path": "mlx/lib/png/lodepng.c"
+      },
+      {
+        "repo": "deepkh/libex",
+        "path": "liblodepng/lodepng.c"
+      },
+      {
+        "repo": "MrCrackerplays/Cub3d",
+        "path": "MLX42/lib/png/lodepng.c"
+      },
+      {
+        "repo": "yeungalan0/Minecraft_AI",
+        "path": "Craft/deps/lodepng/lodepng.c"
+      },
+      {
+        "repo": "mitchyc24/PrewittVision",
+        "path": "src/lodepng.c"
+      },
+      {
+        "repo": "SheinbergLab/dlsh",
+        "path": "pkgs/bink/lodepng.c"
+      },
+      {
+        "repo": "ps100000/Chess-Tracker",
+        "path": "basic_analysis/lodepng.c"
+      },
+      {
+        "repo": "itsmesauravk/-C-_Assignment",
+        "path": "Task4/lodepng.c"
+      },
+      {
+        "repo": "os-fpga/1st-CLaaS",
+        "path": "apps/mandelbrot/host/lodepng.c"
+      },
+      {
+        "repo": "yakovlev398/Dz2-Ormuz",
+        "path": "2png.c"
+      },
+      {
+        "repo": "drorgl/esp32-lvgl-configuration-demo",
+        "path": "lib/lvgl-8.3.0/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "andwn/cave-story-md",
+        "path": "tools/rescomp/src/libpng.c"
+      },
+      {
+        "repo": "master-g/cmg",
+        "path": "src/medsr/Utils/LodePng.c"
+      },
+      {
+        "repo": "esl/parcv",
+        "path": "imgproc/c_src/lodepng.c"
+      },
+      {
+        "repo": "tbagies/GPU-BranchDivergence",
+        "path": "ImageProcessingApps/processCPU.c"
+      },
+      {
+        "repo": "JoseQuiosco/campus42",
+        "path": "repofractol/mlx42/lib/png/lodepng.c"
+      },
+      {
+        "repo": "londonreturns/c_multithreading_final_portfolio",
+        "path": "4. Gaussian Blur/lodepng.c"
+      },
+      {
+        "repo": "timelapseplus/VIEW",
+        "path": "src/lib/lib_png.c"
+      },
+      {
+        "repo": "ca2/third2021",
+        "path": "xwinpr/libwinpr/utils/lodepng/lodepng.c"
+      },
+      {
+        "repo": "chen66666697/Rvicard-master",
+        "path": "Materials/3.2/lvgl/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "beifang2795/my-node",
+        "path": "CODE/LVGL_CODE/lvgl/src/libs/lodepng/lodepng.c"
+      },
+      {
+        "repo": "kaizen857/punchClock",
+        "path": "lvgls/lvgl/src/libs/lodepng/lodepng.c"
+      },
+      {
+        "repo": "bhgv/Inferno-OS-bhgv",
+        "path": "liblodepng/lodepng.c"
+      },
+      {
+        "repo": "rmtew/incursion-roguelike",
+        "path": "libtcod/src/png/lodepng.c"
+      },
+      {
+        "repo": "leeroybrun/Bin2PNG",
+        "path": "lodepng.c"
+      },
+      {
+        "repo": "EU1KY/eu1ky_aa_v3_h745",
+        "path": "src/cm7/src/analyzer/lcd/lodepng.c"
+      },
+      {
+        "repo": "Formula-Electric-Berkeley/FEB_FIRMWARE_SN5",
+        "path": "DASH/Drivers/lvgl/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "luigi-budd/takis-assets",
+        "path": "assets/asset shit/KART/src/lodepng.c"
+      },
+      {
+        "repo": "smealum/portal3DS",
+        "path": "source/gfx/lodepng.c"
+      },
+      {
+        "repo": "Lisly25/cub3d",
+        "path": "mlx/lib/png/lodepng.c"
+      },
+      {
+        "repo": "perondeidad/Ciberchud",
+        "path": "tools/png2bin/lodepng.c"
+      },
+      {
+        "repo": "forza0310/HoloCubicX",
+        "path": "lib/lvgl-v8.3/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "Ai-Thinker-Open/aithinker_Ai-M6X_SDK",
+        "path": "components/graphics/lvgl/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "yinhao-f/cpsc-313-2025w2",
+        "path": "lab8/lodepng/lodepng.c"
+      },
+      {
+        "repo": "FuriLabs/lvgl",
+        "path": "src/libs/png/lodepng.c"
+      },
+      {
+        "repo": "amcchord/VescBigDash",
+        "path": "Docs/Arduino/libraries/lvgl/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "tchornous/WaveShare-RP2040-1.28-LCD-LVGL-Coil_counter_Pub",
+        "path": "lib/lvgl/src/libs/lodepng/lodepng.c"
+      },
+      {
+        "repo": "hongxuyao/F1C100s_with_Keil_RTX4_emWin5",
+        "path": "lvgl8/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "afska/gba-remote-play",
+        "path": "raspi/lib/code/lodepng.c"
+      },
+      {
+        "repo": "aros-development-team/contrib",
+        "path": "gfx/c-ray/src/vendored/lodepng.c"
+      },
+      {
+        "repo": "daokoder/dao-modules",
+        "path": "image/source/lode_png.c"
+      },
+      {
+        "repo": "hariskonstadinidis/portfolio",
+        "path": "miniRT/inc/MLX42/lib/png/lodepng.c"
+      },
+      {
+        "repo": "alireza7991/png2rle",
+        "path": "png.c"
+      },
+      {
+        "repo": "h00kz/cub3d",
+        "path": "cub3D_bonus/MLX42/lib/png/lodepng.c"
+      },
+      {
+        "repo": "nicolasque/cube_3D",
+        "path": "src/includes/MLX42/lib/png/lodepng.c"
+      },
+      {
+        "repo": "skarab/megadrive-2019",
+        "path": "sgdk/tools/rescomp/src/libpng.c"
+      },
+      {
+        "repo": "Bhupen04/NMC",
+        "path": "Task4/lodepng.c"
+      },
+      {
+        "repo": "jordyantunes/TCC",
+        "path": "src/camera-motion/camera-motion/PNG/png.c"
+      },
+      {
+        "repo": "Orange-Murker/sntpings",
+        "path": "lodepng.c"
+      },
+      {
+        "repo": "sundm75/Loongson-Smartloong-V3.0-RTT",
+        "path": "components/gui/libraries/lodepng/lodepng.c"
+      },
+      {
+        "repo": "michaimmendoerfer/Git-Jeepify-Monitor",
+        "path": "src/Devices/Dev_360_knob/lib/lvgl/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "montyk11/stm32-oled-lvgl-gui",
+        "path": "CM7/LVGL/src/libs/lodepng/lodepng.c"
+      },
+      {
+        "repo": "jonathankli/lilygo-encoder",
+        "path": "lib/lvgl-8.3.5/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "summertriangle-dev/starlight_sync",
+        "path": "misc_utils/libahff/lodepng.c"
+      },
+      {
+        "repo": "TBTerra/pictor",
+        "path": "tools/spriteCreator/lodepng.c"
+      },
+      {
+        "repo": "alexandre6795/cub3dpub",
+        "path": "include/.MLX42/lib/png/lodepng.c"
+      },
+      {
+        "repo": "tylerpayne/chai",
+        "path": "common/lodepng.c"
+      },
+      {
+        "repo": "Magicrafter13/BreakoutRedux",
+        "path": "OldBreakout-Temp/source/gfx/lodepng.c"
+      },
+      {
+        "repo": "AndreiBoghean/p2t-raytracer-implementation",
+        "path": "lodepng/lodepng.c"
+      },
+      {
+        "repo": "Kevincoooool/lvgl_v9_esp32s3",
+        "path": "components/lvgl/src/libs/png/lodepng.c"
+      },
+      {
+        "repo": "Elecrow-RD/CrowPanel-2.1inch-HMI-ESP32-Rotary-Display-480-480-IPS-Round-Touch-Knob-Screen",
+        "path": "example/libraries/lvgl/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "knix008/LVGL",
+        "path": "ImageButtonUI/Source/lvgl/src/libs/lodepng/lodepng.c"
+      },
+      {
+        "repo": "todayThursday/stm32F103ZET6_LVGL_FreeRTOS",
+        "path": "NXP_CLOCK/lvgl/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "burksbuilds/DiceCalculator",
+        "path": ".pio/libdeps/default/lvgl/src/extra/libs/png/lodepng.c"
+      },
+      {
+        "repo": "miuser00/luatosmv",
+        "path": "LuatOS/LuatOS/components/lodepng/lodepng.c"
+      },
+      {
+        "repo": "Nzettodess/Street-Kart-Around-FTMK",
+        "path": "include/Library/lodepng.c"
+      },
+      {
+        "repo": "jmamorim/LAP",
+        "path": "imageomatic/src/lodepng.c"
+      },
+      {
+        "repo": "aaannndddyyy/monkeymind",
+        "path": "src/lodepng.c"
+      },
+      {
+        "repo": "GergelyRoka/42Berlin",
+        "path": "core/06_so_long/code/lib/MLX42/lib/png/lodepng.c"
+      },
+      {
+        "repo": "Rreyth/42Common-core",
+        "path": "cub3D/MLX42/lib/png/lodepng.c"
+      }
+    ],
+    "patched_repos": [
+      {
+        "repo": "HanSoBored/Native-Bridge",
+        "path": "src/common/lodepng.c"
+      },
+      {
+        "repo": "bsinghvird/pikuma-renderer",
+        "path": "renderer/lodepng.c"
+      },
+      {
+        "repo": "nl-codes/hpc_herald",
+        "path": "sobel/lodepng.c"
+      }
+    ]
+  }
+}
