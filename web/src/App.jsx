@@ -2,14 +2,18 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { HexclaveGate, useMaybeUser, signIn, signOut, hexclaveEnabled } from './hexclave.jsx'
 import { DEPLOYED, canRepair, canScanAll, runAudit, getTarget, getSource, getEvidence, getTargets } from './api.js'
 
-/* Every value on this page came from a live engine call.
+/* Run locally, every value on this page comes from a live engine call.
      /api/audit    scoped GitHub search + per-file byte reads
      /api/scan     the same, across all of GitHub for one upstream fix
      /api/repair   real three-way merge, hash gate, two sanitizer builds, real PoC probe
      /api/source   ClanLib's actual file at the pinned commit
      /api/evidence the artifacts the last run wrote to disk
-   Nothing is replayed and nothing is fixture data. Where the engine cannot decide, the
-   interface says so rather than picking a side. */
+
+   The deployed build has no compiler and no long-running process, so repair and the
+   whole-of-GitHub scan are disabled rather than simulated, and the proof shown is the
+   artifact set from a real verified run, labelled as recorded. Audit still runs live.
+   Nothing here is fixture data. Where the engine cannot decide, the interface says so
+   rather than picking a side. */
 
 const useSSE = () => {
   const ref = useRef(null)
@@ -26,9 +30,13 @@ const useSSE = () => {
   return open
 }
 
+/* Watch needs the local server's watchlist, so the deployed build omits that section.
+   The nav is derived from what actually renders rather than hardcoded, otherwise the
+   deployed site advertises an anchor that isn't on the page. */
 const SECTIONS = [
   ['audit', 'Audit'], ['case', 'The case'], ['proof', 'Proof'],
-  ['receipt', 'Receipt'], ['scale', 'At scale'], ['watch', 'Watch'],
+  ['receipt', 'Receipt'], ['scale', 'At scale'],
+  ...(DEPLOYED ? [] : [['watch', 'Watch']]),
 ]
 
 /* Measured 2026-07-25 and published in data/vendored-scan.json. Regenerate with
