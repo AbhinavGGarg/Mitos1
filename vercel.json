@@ -1,6 +1,10 @@
 {
-  "buildCommand": "cd web && npm install && VITE_DEPLOYED=1 npm run build",
+  "framework": null,
+  "installCommand": "npm install --prefix web",
+  "buildCommand": "VITE_DEPLOYED=1 npm run build --prefix web",
   "outputDirectory": "web/dist",
-  "functions": { "api/audit.py": { "runtime": "@vercel/python@4.3.0" } },
+  "functions": {
+    "api/audit.py": { "runtime": "@vercel/python@4.3.0" }
+  },
   "rewrites": [{ "source": "/((?!api/|static/|assets/).*)", "destination": "/index.html" }]
 }

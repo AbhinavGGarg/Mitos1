@@ -8,3 +8,4 @@ mitos-out/
 watchlist.json
 
 .env
+.vercel
