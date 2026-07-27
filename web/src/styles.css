@@ -85,8 +85,9 @@ button{font-family:var(--mono);cursor:pointer;border:0;background:none;color:inh
 
 /* ── masthead ── */
 .masthead{
-  position:sticky;top:0;z-index:60;background:rgba(247,244,238,.86);
-  backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);
+  /* Opaque, not translucent. The page scrolls dark machine panels under this bar, and a
+     frosted header only stays legible where backdrop-filter actually renders. */
+  position:sticky;top:0;z-index:60;background:var(--paper);
   border-bottom:1px solid var(--rule);
 }
 .masthead-in{max-width:var(--page);margin:0 auto;padding:0 var(--gutter);height:64px;
