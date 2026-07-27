@@ -9,13 +9,78 @@ Method, and its limits, stated up front:
   * GitHub code search ranking is not stable, so this is a sample, not a census.
 """
 import json
+import subprocess
 import sys
 import time
 
 sys.path.insert(0, "/Users/abhinavgarg/Wizard Hackathon/patchdna")
-from mitos import cve  # noqa: E402
+from mitos import cve, similarity as sim  # noqa: E402
 
 OUT = "/Users/abhinavgarg/Wizard Hackathon/mitos-data/vendored-scan.json"
+CACHE = "/Users/abhinavgarg/Wizard Hackathon/.mitos-cache"
+
+# Libraries whose fix introduces no greppable identifier. Classified by comparing the copy's
+# version of the patched function against upstream's before/after shapes. Copies that cannot
+# be separated are counted as indeterminate, never guessed at.
+SIM_LIBS = {
+    "miniz": {
+        "queries": ["tinfl_decompress language:c", "TINFL_STATUS_DONE language:c"],
+        "repo": "miniz", "path": "miniz_tinfl.c", "fix": "384a12d",
+        "cve": "CVE-2018-12913 regression (code_len==0 infinite loop)",
+    },
+    "cgltf": {
+        "queries": ["cgltf_parse_json_draco_mesh_compression language:c",
+                    "cgltf_parse_json language:c"],
+        "repo": "cgltf", "path": "cgltf.h", "fix": "1e40b58",
+        "cve": "out-of-bounds read parsing malformed Draco extension",
+    },
+}
+
+
+def _blob(repo, ref, path):
+    return subprocess.run(["git", "-C", f"{CACHE}/{repo}", "show", f"{ref}:{path}"],
+                          capture_output=True).stdout
+
+
+def scan_similarity(name, cfg):
+    parent = subprocess.run(["git", "-C", f"{CACHE}/{cfg['repo']}", "rev-parse", f"{cfg['fix']}~1"],
+                            capture_output=True, text=True).stdout.strip()
+    changed = sim.changed_functions(_blob(cfg["repo"], parent, cfg["path"]),
+                                    _blob(cfg["repo"], cfg["fix"], cfg["path"]))
+    if not changed:
+        return None
+    seen, stale, ok, indet, absent = set(), [], [], 0, 0
+    for q in cfg["queries"]:
+        try:
+            hits = cve.search_code(q, max_results=40, verbose=lambda m: None)
+        except Exception as e:
+            print(f"{name}: query failed ({e})", flush=True)
+            continue
+        for h in hits:
+            key = (h.repo, h.path)
+            if key in seen:
+                continue
+            seen.add(key)
+            src = cve.fetch_source(h)
+            if src is None:
+                continue
+            v, _ = sim.verdict(src, changed)
+            if v == sim.STALE:
+                stale.append({"repo": h.repo, "path": h.path})
+            elif v == sim.PATCHED:
+                ok.append({"repo": h.repo, "path": h.path})
+            elif v == sim.ABSENT:
+                absent += 1
+            else:
+                indet += 1
+        print(f"{name}: '{q[:38]}' -> {len(stale)} unpatched / {len(ok)} patched "
+              f"/ {indet} indeterminate", flush=True)
+        time.sleep(2)
+    return {"method": "similarity", "keyed_on": changed[0].name,
+            "fix_delta": round(changed[0].delta, 5), "cve": cfg["cve"],
+            "confirmed_copies": len(stale) + len(ok), "unpatched": len(stale),
+            "patched": len(ok), "indeterminate": indet, "absent": absent,
+            "unpatched_repos": stale, "patched_repos": ok}
 
 LIBS = {
     "stb_image": {
@@ -85,13 +150,23 @@ def main():
             "unpatched_repos": stale, "patched_repos": ok,
         }
 
+    for name, cfg in SIM_LIBS.items():
+        r = scan_similarity(name, cfg)
+        if r:
+            out[name] = r
+
     json.dump(out, open(OUT, "w"), indent=2)
     print("\n=== DATASET ===", flush=True)
+    tu = tc = 0
     for lib, d in out.items():
         tot = d["confirmed_copies"]
         pct = round(100 * d["unpatched"] / tot) if tot else 0
-        print(f"  {lib:12} {d['unpatched']}/{tot} unpatched ({pct}%)  "
-              f"· {d['references_excluded']} refs excluded", flush=True)
+        extra = (f"· {d['references_excluded']} refs excluded"
+                 if "references_excluded" in d
+                 else f"· {d['indeterminate']} indeterminate")
+        print(f"  {lib:12} {d['unpatched']:>3}/{tot:<3} unpatched ({pct:>3}%)  {extra}", flush=True)
+        tu += d["unpatched"]; tc += tot
+    print(f"  {'TOTAL':12} {tu:>3}/{tc:<3} unpatched ({round(100*tu/tc) if tc else 0}%)", flush=True)
     print(f"\nwritten -> {OUT}", flush=True)
 
 
