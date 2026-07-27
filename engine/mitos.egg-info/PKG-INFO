@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: mitos
+Version: 0.1.0
+Summary: Dependabot for copied, vendored, and AI-derived code that package managers cannot see.
+Requires-Python: >=3.10
+License-File: LICENSE
+Requires-Dist: tree-sitter>=0.23
+Requires-Dist: tree-sitter-c>=0.23
+Dynamic: license-file

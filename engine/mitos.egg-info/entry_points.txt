@@ -1,0 +1,2 @@
+[console_scripts]
+mitos = mitos.cli:main

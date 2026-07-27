@@ -206,7 +206,9 @@ def test_decide_scoped_when_reachable_not_fully_exercised():
     ({"parent_verified": False}, "parent"),
     ({"clone_validated": False}, "clone failed"),
     ({"generator_clean": False}, "generator tree is dirty"),
-    ({"hunks": [{"status": "wrong_branch", "verified": False}]}, "not verified"),
+    # positional verification gates only when there is no golden postimage to defer to
+    ({"hunks": [{"status": "wrong_branch", "verified": False}],
+      "golden_attested": False, "golden_ok": False}, "not verified"),
     ({"probes": [{"ok": False}]}, "behavioural probe"),
     ({"probes": []}, "did not run"),
     ({"behavioural_loaders": ["BMP", "XYZ"], "reachable_loaders": ["BMP"], "modified_loaders": ["BMP", "XYZ"]}, "⊄ reachable"),
@@ -217,6 +219,20 @@ def test_decide_scoped_when_reachable_not_fully_exercised():
 def test_decide_needs_review_on_each_failure(over, needle):
     v, r = decide(**_ok(**over))
     assert v == "NEEDS_REVIEW" and any(needle in x for x in r)
+
+
+def test_decide_golden_postimage_makes_positional_check_advisory():
+    """An exact match to the independently-reviewed postimage is the authoritative guarantee,
+    so an unverified hunk no longer fails the run.
+
+    This is not leniency. Two identical edits in one function (the draw_line
+    inverse_db_table[y&255] case) cannot be told apart by any positional heuristic, so
+    positional verification alone would reject a repair that is provably byte-correct.
+    Without a golden postimage the positional check still gates — see the parametrised case
+    above."""
+    v, _ = decide(**_ok(hunks=[{"status": "ambiguous", "verified": False}],
+                        golden_attested=True, golden_ok=True))
+    assert v == "VERIFIED"
 
 
 def test_decide_experimental_recipe_without_golden_still_gates_normally():

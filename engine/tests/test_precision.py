@@ -321,3 +321,93 @@ def test_primary_marker_ignores_comment_words():
         "+    if (w > MAX_DIM) return -1;",
     ])
     assert primary_marker(patch) == "MAX_DIM"
+
+
+# ---- new helper definitions: the commonest shape of a real security fix ------
+# "Add a validation helper, then call it." The helper's own hunk has generic context
+# (a blank line and a closing brace), so context matching goes ambiguous and drops it —
+# leaving the call sites transplanted and the helper undefined, which does not compile.
+# Real case: nothings/stb@47164e40 adds stbi__addints_valid + stbi__mul2shorts_valid and
+# calls them; three of five live stale copies failed to compile until the helper landed.
+HELPER_PATCH = "\n".join([
+    "@@ @@",
+    "+// returns 1 if the sum is valid",
+    "+static int ck_add(int a, int b)",
+    "+{",
+    "+    return a <= 2147483647 - b;",
+    "+}",
+    "+",
+    "@@ @@ decode",
+    "     int diff = get();",
+    "+    if (!ck_add(acc, diff)) return -1;",
+])
+
+HELPER_TARGET = "\n".join([
+    "static int helper(int q){",
+    "    return q + 1;",
+    "}",
+    "static int decode(int acc){",
+    "    int diff = get();",
+    "    return acc + diff;",
+    "}",
+])
+
+
+def test_new_helper_is_transplanted_and_lands_before_its_caller():
+    patched, sites, ins = apply_fix(HELPER_TARGET, HELPER_PATCH)
+    assert all(s.status == "applied" for s in sites), [s.reason for s in sites]
+
+    lines = patched.split("\n")
+    defn = next(i for i, l in enumerate(lines) if l.strip().startswith("static int ck_add"))
+    call = next(i for i, l in enumerate(lines) if "ck_add(acc, diff)" in l)
+    assert defn < call, "a C helper must be defined before it is used"
+
+    # file scope, and outside the function that calls it
+    flags, _ = code_line_flags(patched)
+    assert flags[defn]["depth"] == 0
+    holder = next(i for i, l in enumerate(lines) if l.strip().startswith("static int decode"))
+    assert defn < holder, "the helper must not be nested inside its caller"
+
+    ok, records = audit_placement(patched, ins)
+    assert ok, [r for r in records if not r["ok"]]
+
+
+def test_helper_defined_twice_fails_the_audit():
+    """Transplanting a helper the copy already has would define it twice; the audit must
+    catch that rather than report a clean placement."""
+    already = HELPER_TARGET.replace(
+        "static int helper(int q){",
+        "static int ck_add(int a, int b){ return 1; }\nstatic int helper(int q){")
+    patched, sites, ins = apply_fix(already, HELPER_PATCH)
+    dup = [r for r in audit_placement(patched, ins)[1] if not r["ok"]]
+    assert not dup or all("exactly once" in (r["reason"] or "") for r in dup)
+    # either the hunk was recognised as already present, or the duplicate is reported
+    assert (any("already present" in (s.reason or "") for s in sites)
+            or dup), "a duplicate definition must not pass silently"
+
+
+def test_uncalled_helper_is_skipped_not_guessed():
+    """A helper nothing calls has no defensible position, so it is skipped honestly."""
+    patch = "\n".join(HELPER_PATCH.split("\n")[:7])   # the definition hunk only
+    patched, sites, _ins = apply_fix(HELPER_TARGET, patch)
+    assert patched == HELPER_TARGET
+    assert any(s.status == "skipped" and "calls it" in (s.reason or "") for s in sites), \
+        [(s.status, s.reason) for s in sites]
+
+
+# ---- the catalog: a bad entry here produces confident nonsense ----------------
+def test_catalog_entries_are_well_formed():
+    """Discovery trusts these constants completely, so they get checked mechanically.
+    A fix marker that is also an identity marker would mark every copy as patched; a
+    truncated SHA would silently resolve to the wrong commit."""
+    from mitos.backport import CATALOG, BY_NAME
+    assert CATALOG and len(BY_NAME) == len(CATALOG), "library names must be unique"
+    for lib in CATALOG:
+        assert lib.identity, f"{lib.name}: needs implementation markers to exclude callers"
+        assert lib.fix_marker not in lib.identity, \
+            f"{lib.name}: fix marker doubles as an identity marker — every copy would look patched"
+        assert lib.symbol not in lib.identity, \
+            f"{lib.name}: the public symbol is not implementation-only"
+        assert len(lib.fix_sha) == 40 and all(c in "0123456789abcdef" for c in lib.fix_sha), \
+            f"{lib.name}: fix_sha must be a full 40-hex commit"
+        assert "/" in lib.upstream and lib.fix_path

@@ -1,0 +1,97 @@
+name: Mitos backport
+description: Find vendored copies that never received their upstream security fix, transplant it, and prove the result still compiles.
+author: Mitos
+
+# Why this runs in your CI rather than on a server somewhere: verifying a transplant means
+# compiling the patched file, and the behavioural probe builds and runs a binary from your
+# own source. Your CI is already where your code builds and runs, so nothing here asks you
+# to send your source anywhere, and nothing asks us to execute a stranger's code.
+
+inputs:
+  libraries:
+    description: "Restrict to one catalog library (default: every library in the catalog)."
+    required: false
+    default: ""
+  path:
+    description: Directory to scan. Defaults to the whole checkout.
+    required: false
+    default: "."
+  probe:
+    description: >
+      Run the behavioural probe, which builds and runs a binary from the scanned source.
+      Safe for your own repository; set to false if you would rather only compile.
+    required: false
+    default: "true"
+  fail-on-stale:
+    description: Fail the job when a copy is missing its upstream fix. Off by default, so the first run reports rather than blocks.
+    required: false
+    default: "false"
+
+outputs:
+  stale:
+    description: Number of vendored copies found to be missing an upstream fix.
+    value: ${{ steps.run.outputs.stale }}
+  verified:
+    description: Number of those that were patched and verified.
+    value: ${{ steps.run.outputs.verified }}
+  patched:
+    description: "true when the working tree now contains verified patches."
+    value: ${{ steps.run.outputs.patched }}
+  report:
+    description: Path to the plain-text report. It is written outside the checkout, so it never lands in your diff.
+    value: ${{ steps.run.outputs.report }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install Mitos
+      shell: bash
+      run: pip install --quiet "${{ github.action_path }}/.."/engine
+
+    - name: Backport and verify
+      id: run
+      shell: bash
+      env:
+        # applyfix reads commits through the gh CLI, which is preinstalled on GitHub runners.
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -o pipefail
+        # Evidence goes to the runner's temp dir, never into the checkout: an untracked
+        # mitos-out/ would be staged by the pull-request step and ride along in the diff.
+        args=(--checkout "${{ inputs.path }}" --in-place --out "$RUNNER_TEMP/mitos-out")
+        [ -n "${{ inputs.libraries }}" ] && args+=(--lib "${{ inputs.libraries }}")
+        [ "${{ inputs.probe }}" = "true" ] || args+=(--no-execute)
+
+        python -m mitos backport "${args[@]}" 2>&1 | tee "$RUNNER_TEMP/raw.txt"
+        report="$RUNNER_TEMP/mitos-report.txt"
+        sed 's/\x1b\[[0-9;]*m//g' "$RUNNER_TEMP/raw.txt" > "$report"
+        stale=$(grep -c 'MISSING the fix' "$report" || true)
+        verified=$(grep -c 'VERIFIED_' "$report" || true)
+        echo "report=$report" >> "$GITHUB_OUTPUT"
+        echo "stale=$stale"       >> "$GITHUB_OUTPUT"
+        echo "verified=$verified" >> "$GITHUB_OUTPUT"
+        if git diff --quiet; then echo "patched=false" >> "$GITHUB_OUTPUT"
+        else echo "patched=true" >> "$GITHUB_OUTPUT"; fi
+
+        {
+          echo "## Mitos"
+          if [ "$stale" -eq 0 ]; then
+            echo "No vendored copy is missing an upstream fix."
+            echo "_This checks a small catalog of commonly copied C libraries. Absence here is not evidence of absence._"
+          else
+            echo "**$stale** vendored cop$([ "$stale" -eq 1 ] && echo y || echo ies) missing an upstream fix; **$verified** patched and verified."
+          fi
+          echo '```'
+          sed 's/\x1b\[[0-9;]*m//g' mitos-report.txt
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        if [ "${{ inputs.fail-on-stale }}" = "true" ] && [ "$stale" -gt 0 ]; then
+          echo "::error::$stale vendored copy/copies are missing a published upstream fix"
+          exit 1
+        fi
