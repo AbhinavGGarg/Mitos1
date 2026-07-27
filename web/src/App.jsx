@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { HexclaveGate, useMaybeUser, signIn, signOut, hexclaveEnabled } from './hexclave.jsx'
+import { DEPLOYED, canRepair, canScanAll, runAudit, getTarget, getSource, getEvidence, getTargets } from './api.js'
 
 /* Every value on this page came from a live engine call.
      /api/audit    scoped GitHub search + per-file byte reads
@@ -158,11 +159,11 @@ function Audit({ onDone }) {
     e?.preventDefault()
     if (!valid) return
     setRows([]); setSkipped([]); setDone(null); setErr(null); setRunning(true)
-    openSSE(`/api/audit?repo=${encodeURIComponent(slug(repo))}`, (d) => {
+    runAudit(slug(repo), (d) => {
       if (d.type === 'checking') setChecking(d.lib)
       if (d.type === 'log') setSkipped(s => [...s, d.text])
       if (d.type === 'finding') setRows(x => [...x, d])
-      if (d.type === 'error') setErr(d.text || 'stream failed')
+      if (d.type === 'error') setErr(d.text || 'the audit could not complete')
       if (d.type === 'done') { setDone(d); onDone?.(d) }
     }, (last) => {
       setRunning(false); setChecking(null)
@@ -256,7 +257,7 @@ function TheCase({ target }) {
   const [src, setSrc] = useState(null)
   const [tab, setTab] = useState('vuln')
   const [cve, setCve] = useState(null)
-  useEffect(() => { fetch('/api/source').then(r => r.json()).then(setSrc).catch(() => {}) }, [])
+  useEffect(() => { getSource().then(setSrc).catch(() => {}) }, [])
   if (!target) return null
 
   const views = {
@@ -340,17 +341,27 @@ function TheCase({ target }) {
 
 /* ── proof ────────────────────────────────────────────────── */
 function Proof({ res, logs, running, run }) {
-  const probe = res?.probes?.[0]
+  // With no compiler in the runtime the repair cannot execute. Rather than hide the
+  // section or fake it, show the probe from a real recorded run and say that is what it is.
+  const [rec, setRec] = useState(null)
+  useEffect(() => { if (!canRepair) getEvidence().then(d => setRec(d?.evidence)).catch(() => {}) }, [])
+  const shown = res || (canRepair ? null : rec)
+  const probe = shown?.probes?.[0]
   const asan = probe?.detail?.match(/ERROR: AddressSanitizer: ([a-z-]+)/)?.[1]
 
   return (
     <section className="sec" id="proof">
       <div className="page">
         <Head kicker="Assertion beside measurement" title="Anyone can say they fixed it"
-              action={<button className={`act ${running ? 'busy' : ''}`} onClick={run} disabled={running}
-                              style={{ marginTop: 14 }}>
-                {running ? 'repairing…' : res ? 'Run again' : 'Run the repair'}
-              </button>}>
+              action={canRepair
+                ? <button className={`act ${running ? 'busy' : ''}`} onClick={run} disabled={running}
+                          style={{ marginTop: 14 }}>
+                    {running ? 'repairing…' : res ? 'Run again' : 'Run the repair'}
+                  </button>
+                : <div className="crit" style={{ marginTop: 14 }}>
+                    This deployment has no compiler, so the repair cannot run here. What follows
+                    is a real run, recorded. Clone the repository to reproduce it.
+                  </div>}>
           <p>
             The fix is merged into their copy with git, and the result is checked against a hash
             of the known-correct file. Then their code is built twice and fed the same crafted
@@ -371,7 +382,8 @@ function Proof({ res, logs, running, run }) {
           <div className="measurement">
             <div className="instrument-cap">
               <span>ClanLib's own translation unit · AddressSanitizer</span>
-              <span>{res ? `${res.baseline.status} / ${res.patched.status}` : 'idle'}</span>
+              <span>{!canRepair && probe ? 'recorded run' :
+                shown ? `${shown.baseline_build?.status || shown.baseline?.status} / ${shown.patched_build?.status || shown.patched?.status}` : 'idle'}</span>
             </div>
             <div className="ba">
               <div className={probe ? 'fired' : ''}>
@@ -395,12 +407,14 @@ function Proof({ res, logs, running, run }) {
           </div>
         </div>
 
-        <div style={{ marginTop: 14 }}>
-          <Instrument cap="engine output" right={running ? 'running' : `${logs.length} lines`}
-                      empty="nothing is pre-recorded; press Run the repair">
-            {logs.length ? logs.map((l, i) => <div key={i}>{l}</div>) : null}
-          </Instrument>
-        </div>
+        {canRepair && (
+          <div style={{ marginTop: 14 }}>
+            <Instrument cap="engine output" right={running ? 'running' : `${logs.length} lines`}
+                        empty="nothing is pre-recorded; press Run the repair">
+              {logs.length ? logs.map((l, i) => <div key={i}>{l}</div>) : null}
+            </Instrument>
+          </div>
+        )}
       </div>
     </section>
   )
@@ -410,7 +424,7 @@ function Proof({ res, logs, running, run }) {
 function Receipt({ res }) {
   const [ev, setEv] = useState(null)
   const [tab, setTab] = useState('pr')
-  useEffect(() => { fetch('/api/evidence').then(r => r.json()).then(setEv).catch(() => {}) }, [res])
+  useEffect(() => { getEvidence().then(setEv).catch(() => {}) }, [res])
 
   return (
     <section className="sec" id="receipt">
@@ -487,7 +501,7 @@ function AtScale({ onStats }) {
   const [filter, setFilter] = useState('ALL')
   const openSSE = useSSE()
 
-  useEffect(() => { fetch('/api/targets').then(r => r.json()).then(d => setTargets(d.targets)).catch(() => {}) }, [])
+  useEffect(() => { getTargets().then(d => setTargets(d.targets)).catch(() => {}) }, [])
 
   const stale = hits.filter(h => h.status === 'STALE').length
   const immune = hits.filter(h => h.status === 'IMMUNE').length
@@ -508,10 +522,15 @@ function AtScale({ onStats }) {
     <section className="sec" id="scale">
       <div className="page">
         <Head kicker="The inverse question" title="Who else is still missing it"
-              action={<button className={`act ${running ? 'busy' : ''}`} onClick={run} disabled={running}
-                              style={{ marginTop: 14 }}>
-                {running ? 'reading…' : done ? 'Read again' : 'Read GitHub'}
-              </button>}>
+              action={canScanAll
+                ? <button className={`act ${running ? 'busy' : ''}`} onClick={run} disabled={running}
+                          style={{ marginTop: 14 }}>
+                    {running ? 'reading…' : done ? 'Read again' : 'Read GitHub'}
+                  </button>
+                : <div className="crit" style={{ marginTop: 14 }}>
+                    Reading every copy across GitHub streams hundreds of files and needs the local
+                    server. The measured result is the ledger at the top of this page.
+                  </div>}>
           <p>
             Audit asks what is hiding in one repository. This asks who across GitHub is still
             carrying a given upstream fix — the question a security team asks the morning a
@@ -666,7 +685,7 @@ export default function App() {
   const [active, setActive] = useState('')
   const openSSE = useSSE()
 
-  useEffect(() => { fetch('/api/target').then(r => r.json()).then(setTarget).catch(() => {}) }, [])
+  useEffect(() => { getTarget().then(setTarget).catch(() => {}) }, [])
   useEffect(() => {
     const io = new IntersectionObserver(
       es => es.forEach(e => e.isIntersecting && setActive(e.target.id)),
@@ -698,7 +717,7 @@ export default function App() {
       <div className="gap l" />
       <AtScale onStats={setStats} />
       <div className="gap" />
-      <Watch lastAudit={lastAudit} />
+      {!DEPLOYED && <Watch lastAudit={lastAudit} />}
       <footer className="footer">
         <div className="page">
           <p><b>Provenance.</b> The engine is pre-existing open-source work, disclosed as a
