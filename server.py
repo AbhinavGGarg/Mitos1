@@ -75,6 +75,45 @@ VENDOR_MARKERS = [
      "fix_url": "https://github.com/lvandeve/lodepng/commit/5a2e751"},
 ]
 
+# Libraries whose fixes introduce NO durable identifier, so there is nothing to grep for.
+# These are classified by function-level similarity instead: the copy's version of the
+# function the fix touched is compared against upstream's before and after shapes. A copy
+# that cannot be separated confidently is reported INDETERMINATE rather than guessed at.
+SIMILARITY_LIBS = [
+    {"name": "miniz", "symbol": "tinfl_decompress", "repo": "miniz",
+     "path": "miniz_tinfl.c", "fix": "384a12d",
+     "cves": "CVE-2018-12913 regression, code_len==0 infinite loop", "severity": "high",
+     "fix_url": "https://github.com/richgel999/miniz/commit/384a12d"},
+    {"name": "cgltf", "symbol": "cgltf_parse_json_draco_mesh_compression", "repo": "cgltf",
+     "path": "cgltf.h", "fix": "1e40b58",
+     "cves": "out-of-bounds read parsing malformed Draco extension", "severity": "high",
+     "fix_url": "https://github.com/jkuhlmann/cgltf/commit/1e40b58"},
+]
+
+MITOS_CACHE = os.environ.get("MITOS_CACHE",
+                             os.path.join(_HERE, ".mitos-cache"))
+_sim_cache = {}
+
+
+def _similarity_profile(lib):
+    """Load (and memoise) the before/after function shapes for a similarity-keyed library."""
+    if lib["name"] in _sim_cache:
+        return _sim_cache[lib["name"]]
+    import subprocess
+    from mitos import similarity as sim
+
+    def blob(ref):
+        return subprocess.run(
+            ["git", "-C", os.path.join(MITOS_CACHE, lib["repo"]), "show", f"{ref}:{lib['path']}"],
+            capture_output=True).stdout
+
+    parent = subprocess.run(
+        ["git", "-C", os.path.join(MITOS_CACHE, lib["repo"]), "rev-parse", f"{lib['fix']}~1"],
+        capture_output=True, text=True).stdout.strip()
+    changed = sim.changed_functions(blob(parent), blob(lib["fix"])) if parent else []
+    _sim_cache[lib["name"]] = changed
+    return changed
+
 # What each CVE in the stb_vorbis cluster actually is, and where the fix lands.
 CVE_DETAIL = {
     "CVE-2019-13217": ("heap buffer overflow", "start_decoder"),
@@ -379,6 +418,44 @@ class Handler(BaseHTTPRequestHandler):
                          "fix": lib["fix_url"]}
                     findings.append(f)
                     self.emit({"type": "finding", **f})
+            # second pass: libraries with no greppable marker, classified by similarity
+            from mitos import similarity as sim
+            for lib in SIMILARITY_LIBS:
+                self.emit({"type": "checking", "lib": lib["name"], "i": checked})
+                checked += 1
+                changed = _similarity_profile(lib)
+                if not changed:
+                    self.emit({"type": "log",
+                               "text": f"{lib['name']}: reference checkout unavailable — skipped"})
+                    continue
+                try:
+                    hits = cve.search_code(f'repo:{repo} {lib["symbol"]}', max_results=4,
+                                           verbose=lambda m: None)
+                except Exception as e:
+                    self.emit({"type": "log", "text": f"{lib['name']}: search unavailable ({e})"})
+                    continue
+                for h in hits:
+                    src = cve.fetch_source(h)
+                    if src is None:
+                        continue
+                    status, ev = sim.verdict(src, changed)
+                    if status == sim.ABSENT:
+                        continue
+                    if status == sim.INDETERMINATE:
+                        self.emit({"type": "log",
+                                   "text": f"{h.path}: {lib['name']} copy has drifted too far to "
+                                           f"separate patched from unpatched — not counted"})
+                        continue
+                    best = max((e for e in ev if e.status == status),
+                               key=lambda e: abs(e.margin), default=None)
+                    f = {"lib": lib["name"], "path": h.path, "patched": status == sim.PATCHED,
+                         "cves": lib["cves"], "severity": lib["severity"], "fix": lib["fix_url"],
+                         "method": "similarity",
+                         "detail": (f"{best.func}: leans {'patched' if best.margin > 0 else 'unpatched'} "
+                                    f"by {abs(best.margin):.4f}") if best else ""}
+                    findings.append(f)
+                    self.emit({"type": "finding", **f})
+
             self.emit({"type": "done", "repo": repo, "checked": checked,
                        "findings": len(findings),
                        "vulnerable": len([f for f in findings if not f["patched"]])})
