@@ -26,10 +26,11 @@ export const getTargets  = () => json(DEPLOYED ? '/static/targets.json'  : '/api
    pinned to exact commits. So the offer is a queued request, not a fake button. The server
    re-runs the audit before accepting, which is why the client never sends findings. */
 export const queueStatus = () =>
-  fetch('/api/request_repair').then(r => r.json()).catch(() => ({ open: false }))
+  (DEPLOYED ? fetch('/api/audit?queue=status').then(r => r.json()) : Promise.resolve({ open: false }))
+    .catch(() => ({ open: false }))
 
 export const requestRepair = (repo, contact, note) =>
-  fetch('/api/request_repair', {
+  fetch('/api/audit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ repo, contact, note }),
