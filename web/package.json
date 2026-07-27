@@ -7,7 +7,9 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/source-serif-4": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
     "@hexclave/react": "^1.0.64",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
