@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { HexclaveGate, useMaybeUser, signIn, signOut, hexclaveEnabled } from './hexclave.jsx'
-import { DEPLOYED, canRepair, canScanAll, runAudit, getTarget, getSource, getEvidence, getTargets } from './api.js'
+import { DEPLOYED, canRepair, canScanAll, runAudit, recordedResult, getTarget, getSource, getEvidence, getTargets } from './api.js'
 
 /* Run locally, every value on this page comes from a live engine call.
      /api/audit    scoped GitHub search + per-file byte reads
@@ -434,6 +434,10 @@ function Receipt({ res }) {
   const [tab, setTab] = useState('pr')
   useEffect(() => { getEvidence().then(setEv).catch(() => {}) }, [res])
 
+  /* Where the repair can run, the receipt reports that run. Where it cannot, it reports the
+     artifact set a real run left behind, and says which one you are looking at. */
+  const shown = res || (canRepair ? null : recordedResult(ev?.evidence))
+
   return (
     <section className="sec" id="receipt">
       <div className="page">
@@ -444,35 +448,38 @@ function Receipt({ res }) {
           </p>
         </Head>
 
-        {!res ? (
-          <div className="empty">run the repair above and the receipt is issued here</div>
+        {!shown ? (
+          <div className="empty">
+            {canRepair ? 'run the repair above and the receipt is issued here'
+                       : 'loading the recorded receipt…'}
+          </div>
         ) : (
           <>
             <div className="receipt">
               <div className="receipt-head">
                 <div className="receipt-title">
-                  <span>Repair record</span>
+                  <span>{shown.recorded ? 'Repair record · recorded run' : 'Repair record'}</span>
                   sphair/ClanLib
                 </div>
-                <div className="stamp"><b>VERDICT</b>{res.verdict.replace('_', ' ')}</div>
+                <div className="stamp"><b>VERDICT</b>{shown.verdict.replace('_', ' ')}</div>
               </div>
               <div className="receipt-rows">
                 <div className="rrow"><span>upstream fix</span><b>nothings/stb@98fdfc6d</b></div>
-                <div className="rrow"><span>three-way merge</span><b>rc {res.merge.returncode} · {res.merge.conflicts} conflicts</b></div>
+                <div className="rrow"><span>three-way merge</span><b>rc {shown.merge.returncode} · {shown.merge.conflicts} conflicts</b></div>
                 <div className="rrow"><span>golden postimage</span>
-                  <b className={res.golden.merged_match ? 'ok' : ''}>{res.golden.merged_match ? 'exact match' : 'MISMATCH'}</b></div>
-                <div className="rrow"><span>baseline build</span><b>{res.baseline.status} · {res.baseline.sha256}</b></div>
-                <div className="rrow"><span>patched build</span><b>{res.patched.status} · {res.patched.sha256}</b></div>
+                  <b className={shown.golden.merged_match ? 'ok' : ''}>{shown.golden.merged_match ? 'exact match' : 'MISMATCH'}</b></div>
+                <div className="rrow"><span>baseline build</span><b>{shown.baseline.status} · {shown.baseline.sha256}</b></div>
+                <div className="rrow"><span>patched build</span><b>{shown.patched.status} · {shown.patched.sha256}</b></div>
                 <div className="rrow"><span>hunks positionally cross-checked</span>
-                  <b>{res.certification.verified_applied}/{res.certification.upstream_hunks}</b></div>
+                  <b>{shown.certification.verified_applied}/{shown.certification.upstream_hunks}</b></div>
                 <div className="rrow"><span>fix sites exercised</span>
-                  <b>{res.coverage.behaviourally_verified_count}/{res.coverage.reachable_count} reachable</b></div>
-                <div className="rrow"><span>generator</span><b>{res.generator}</b></div>
+                  <b>{shown.coverage.behaviourally_verified_count}/{shown.coverage.reachable_count} reachable</b></div>
+                <div className="rrow"><span>generator</span><b>{shown.generator}</b></div>
               </div>
               <div className="limit">
                 <div className="limit-k">What this does not claim</div>
                 <p>
-                  {res.reasons.join('; ')}. We are not claiming a remote exploit of the shipped
+                  {shown.reasons.join('; ')}. We are not claiming a remote exploit of the shipped
                   application — only that the memory-safety fault is present in ClanLib's compiled
                   translation unit before the repair and absent after it. The recipe for this
                   repair was written by a human.

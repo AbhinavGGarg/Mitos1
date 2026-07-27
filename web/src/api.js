@@ -22,6 +22,36 @@ export const getSource   = () => json(DEPLOYED ? '/static/source.json'   : '/api
 export const getEvidence = () => json(DEPLOYED ? '/static/evidence.json' : '/api/evidence')
 export const getTargets  = () => json(DEPLOYED ? '/static/targets.json'  : '/api/targets')
 
+/* The engine writes evidence.json to disk; the local server reshapes it into the payload the
+   receipt renders. This does the same mapping client-side so the deployed build can show the
+   receipt from a real verified run instead of an empty panel telling you to run a repair that
+   this runtime cannot run. Same numbers, same file, read from the artifact rather than a
+   live process — and the UI labels it as recorded. */
+export function recordedResult(ev) {
+  if (!ev) return null
+  const short = (h) => (h || '').slice(0, 16)
+  return {
+    verdict: ev.verdict,
+    reasons: ev.reasons || [],
+    merge: ev.merge,
+    golden: ev.golden_attestation,
+    parent_verified: ev.parent_verified,
+    baseline: { ok: ev.baseline_build?.ok, status: ev.baseline_build?.status,
+                sha256: short(ev.baseline_build?.sha256) },
+    patched: { ok: ev.patched_build?.ok, status: ev.patched_build?.status,
+               sha256: short(ev.patched_build?.sha256) },
+    probes: ev.probes || [],
+    coverage: ev.coverage,
+    certification: ev.hunk_certification,
+    hunks: ev.hunks || [],
+    upstream: ev.upstream,
+    downstream: ev.downstream,
+    generator: (ev.generator_commit || '').slice(0, 10),
+    recipe_digest: (ev.recipe_digest || '').slice(0, 10),
+    recorded: true,
+  }
+}
+
 /** Audit a repository. Emits the same event shapes in both modes so callers don't branch. */
 export function runAudit(repo, onEvent, onDone) {
   if (!DEPLOYED) {
