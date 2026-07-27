@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { HexclaveGate, useMaybeUser, signIn, signOut, hexclaveEnabled } from './hexclave.jsx'
-import { DEPLOYED, canRepair, canScanAll, runAudit, recordedResult, getTarget, getSource, getEvidence, getTargets } from './api.js'
+import { DEPLOYED, canRepair, canScanAll, runAudit, recordedResult, queueStatus, requestRepair,
+         getTarget, getSource, getEvidence, getTargets } from './api.js'
 
 /* Run locally, every value on this page comes from a live engine call.
      /api/audit    scoped GitHub search + per-file byte reads
@@ -147,6 +148,71 @@ function Hero() {
   )
 }
 
+/* Shown only when the audit found something that is actually missing a fix. The engine
+   cannot repair an arbitrary repository yet, so the page offers the thing that is real —
+   a queued request that a person picks up — rather than a button that pretends. */
+function RequestRepair({ repo, count }) {
+  const [open, setOpen] = useState(false)
+  const [contact, setContact] = useState('')
+  const [note, setNote] = useState('')
+  const [state, setState] = useState('idle')   // idle | sending | sent | error
+  const [result, setResult] = useState(null)
+  const [err, setErr] = useState(null)
+
+  useEffect(() => { queueStatus().then(s => setOpen(!!s.open)) }, [])
+  useEffect(() => { setState('idle'); setResult(null); setErr(null) }, [repo])
+  if (!open) return null
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (!contact.trim() || state === 'sending') return
+    setState('sending'); setErr(null)
+    try {
+      setResult(await requestRepair(repo, contact, note))
+      setState('sent')
+    } catch (e2) {
+      setErr(e2.message); setState('error')
+    }
+  }
+
+  if (state === 'sent') {
+    return (
+      <div className="ask sent">
+        <b>{result?.duplicate ? `${repo} was already in the queue.` : `Request filed for ${repo}.`}</b>
+        <span>
+          A person writes the recipe, runs the repair against a real compiler, and opens the
+          pull request with the receipt in it. You will hear back at the address you left.
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <form className="ask" onSubmit={submit}>
+      <div className="ask-head">
+        <b>Want the fix written?</b>
+        <span>
+          Repair needs a compiler and a sanitizer, which this site does not have, and every
+          repair is pinned to a reviewed upstream commit. Ask and a person does the work on
+          {' '}{count === 1 ? 'this copy' : `these ${count} copies`}, then sends you the pull request.
+        </span>
+      </div>
+      <div className="ask-fields">
+        <input value={contact} onChange={e => setContact(e.target.value)}
+               placeholder="email or GitHub handle" spellCheck="false"
+               autoCapitalize="off" autoComplete="off" maxLength={200} />
+        <input value={note} onChange={e => setNote(e.target.value)}
+               placeholder="anything we should know (optional)" maxLength={2000} />
+        <button className={`act ${state === 'sending' ? 'busy' : ''}`}
+                disabled={state === 'sending' || !contact.trim()}>
+          {state === 'sending' ? 'filing…' : 'Ask for the repair'}
+        </button>
+      </div>
+      {err && <div className="ask-err mono">{err}</div>}
+    </form>
+  )
+}
+
 /* ── audit ────────────────────────────────────────────────── */
 function Audit({ onDone }) {
   const [repo, setRepo] = useState('')
@@ -248,6 +314,8 @@ function Audit({ onDone }) {
             )}
           </div>
         )}
+
+        {done && vuln.length > 0 && <RequestRepair repo={done.repo} count={vuln.length} />}
 
         {skipped.length > 0 && (
           <details className="crit" style={{ marginTop: 14 }}>

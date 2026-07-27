@@ -297,6 +297,26 @@ button{font-family:var(--mono);cursor:pointer;border:0;background:none;color:inh
   padding:15px 19px;font-size:14px;color:var(--ink-2)}
 .errbox b{color:var(--stale)}
 
+/* The follow-on offer after a bad audit. Deliberately quieter than .summary — the finding
+   is the news, this is only what you can do about it. */
+.ask{margin-top:14px;border:1px solid var(--rule-firm);background:var(--paper-rise);
+  padding:22px 26px}
+.ask-head b{display:block;font-family:var(--display);font-size:19px;letter-spacing:-.02em;
+  margin-bottom:5px}
+.ask-head span{display:block;color:var(--ink-2);font-size:14.5px;max-width:58ch}
+.ask-fields{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
+.ask-fields input{flex:1 1 210px;min-width:0;background:var(--paper);
+  border:1px solid var(--rule-hard);outline:0;font-family:var(--mono);font-size:13px;
+  padding:11px 13px;color:var(--ink);letter-spacing:-.01em}
+.ask-fields input:focus{border-color:var(--ink)}
+.ask-fields input::placeholder{color:var(--ink-4)}
+.ask-err{margin-top:12px;font-size:12.5px;color:var(--stale)}
+.ask.sent{border-color:var(--patched);background:var(--patched-pap)}
+.ask.sent b{display:block;font-family:var(--display);font-size:19px;letter-spacing:-.02em;
+  color:var(--patched);margin-bottom:5px}
+.ask.sent span{display:block;color:var(--ink-2);font-size:14.5px;max-width:58ch}
+@media (max-width:640px){ .ask-fields .act{flex:1 1 100%} }
+
 .filters{display:flex;gap:0;margin:22px 0 0;border:1px solid var(--rule-firm);width:fit-content}
 .filters button{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);padding:7px 15px;
   border-right:1px solid var(--rule-firm);transition:all .15s}

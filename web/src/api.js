@@ -22,6 +22,23 @@ export const getSource   = () => json(DEPLOYED ? '/static/source.json'   : '/api
 export const getEvidence = () => json(DEPLOYED ? '/static/evidence.json' : '/api/evidence')
 export const getTargets  = () => json(DEPLOYED ? '/static/targets.json'  : '/api/targets')
 
+/* Repair cannot run in this runtime, and today the engine only runs human-authored recipes
+   pinned to exact commits. So the offer is a queued request, not a fake button. The server
+   re-runs the audit before accepting, which is why the client never sends findings. */
+export const queueStatus = () =>
+  fetch('/api/request_repair').then(r => r.json()).catch(() => ({ open: false }))
+
+export const requestRepair = (repo, contact, note) =>
+  fetch('/api/request_repair', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ repo, contact, note }),
+  }).then(async (r) => {
+    const d = await r.json().catch(() => ({}))
+    if (!r.ok) throw new Error(d.error || 'the request could not be filed')
+    return d
+  })
+
 /* The engine writes evidence.json to disk; the local server reshapes it into the payload the
    receipt renders. This does the same mapping client-side so the deployed build can show the
    receipt from a real verified run instead of an empty panel telling you to run a repair that
