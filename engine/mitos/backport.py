@@ -254,6 +254,54 @@ def transplant(upstream: str, sha: str, fix_path: str, target: str, target_path:
     return t
 
 
+def report_markdown(target: str, copies, results, executed: bool) -> str:
+    """What a requester gets back. States what was checked, what was found, and — where
+    Mitos refused — why, since a refusal a reader cannot act on is worse than no answer."""
+    stale = [c for c in copies if not c.patched]
+    ok = [t for t in results if t.verdict.startswith("VERIFIED")]
+    out = [f"Mitos audited **{target}**.", ""]
+
+    if not copies:
+        out += ["No implementation copies of catalog libraries were found.", "",
+                "_This checks a small set of commonly copied C libraries whose fix markers "
+                "have been verified against the upstream commit. Absence here is not "
+                "evidence of absence._"]
+        return "\n".join(out)
+
+    out += ["| library | path | state |", "| --- | --- | --- |"]
+    for c in copies:
+        out.append(f"| `{c.lib.name}` | `{c.path}` | "
+                   f"{'carries the fix' if c.patched else '**missing the fix**'} |")
+    out.append("")
+
+    if not stale:
+        out.append("Every copy already carries its upstream fix. Nothing to backport.")
+        return "\n".join(out)
+
+    out += [f"### {len(ok)} of {len(stale)} patched and verified", ""]
+    for t in results:
+        head = f"**`{t.target_path}`** — `{t.verdict}`"
+        if t.verdict.startswith("VERIFIED"):
+            out += [f"- {head}: {len(t.applied)} site(s) transplanted, "
+                    f"{len(t.records)} inserted line(s) audited, compiles "
+                    f"{'yes' if t.compiles_before else 'no'} → "
+                    f"{'yes' if t.compiles_after else 'no'}."]
+        else:
+            out += [f"- {head}: {t.why_not}."]
+        if t.skipped:
+            out.append(f"  - {len(t.skipped)} hunk(s) skipped rather than guessed: "
+                       + "; ".join(sorted({s.reason for s in t.skipped}))[:300])
+    out.append("")
+    if not executed:
+        out += ["_The behavioural probe was not run: it builds and executes a binary from "
+                "the scanned source, which is appropriate in your own CI and not on our "
+                "machine. Placement and compilation were verified._", ""]
+    out += ["A verified placement means every transplanted line is live code in the expected "
+            "function and the file still compiles. It is not a claim that your shipped "
+            "application was exploitable, nor that your test suite was run."]
+    return "\n".join(out)
+
+
 def write_artifacts(t: Transplant):
     """The patched file, the diff a reviewer reads, and the evidence behind the verdict."""
     os.makedirs(t.out_dir, exist_ok=True)

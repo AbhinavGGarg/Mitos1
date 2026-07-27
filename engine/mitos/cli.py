@@ -327,6 +327,73 @@ def cmd_fix(a):
     print()
 
 
+def cmd_queue(a):
+    """Answer the repair requests the website filed, instead of authoring each by hand.
+
+    Requests name repositories we do not own, so the behavioural probe — which builds and
+    runs a binary from the target's own source — is never enabled here. That costs the
+    VERIFIED_BEHAVIOURAL rung; placement and compilation still decide the rest.
+    """
+    import json as _json
+    from .backport import CATALOG, discover, transplant, report_markdown
+    from .ghsearch import _gh_api
+
+    print(bold("\nMitos") + dim("  —  queue  (answer the repair requests the site filed)\n"))
+    label = a.label
+    try:
+        issues = _json.loads(_gh_api(["-X", "GET", f"repos/{a.repo}/issues",
+                                      "-f", "state=open", "-f", f"labels={label}",
+                                      "-f", "per_page=100"]))
+    except Exception as e:
+        print(red(f"could not read the queue: {e}")); sys.exit(1)
+
+    pending = [i for i in issues
+               if not any(l["name"] == a.answered_label for l in i.get("labels", []))]
+    print(f"  queue   : {cyan(a.repo)}  {dim(f'{len(issues)} open, {len(pending)} unanswered')}\n")
+    if not pending:
+        print(dim("  Nothing to answer.\n")); return
+
+    for issue in pending[:a.limit]:
+        num, title = issue["number"], issue.get("title", "")
+        target = title.split("Repair request:", 1)[-1].strip() if "Repair request:" in title else ""
+        if target.count("/") != 1:
+            print(f"  #{num} {yellow('skipped')} — no owner/name in the title: {dim(title[:60])}")
+            continue
+        print(f"  #{num} {bold(target)}")
+        try:
+            copies, _excluded = discover(target, CATALOG)
+        except Exception as e:
+            print(f"    {red('discovery failed')}: {e}\n"); continue
+
+        results = []
+        for c in [c for c in copies if not c.patched]:
+            try:
+                results.append(transplant(c.lib.upstream, c.lib.fix_sha, c.lib.fix_path,
+                                          target, c.path, defined=frozenset(c.lib.defines),
+                                          write=False, execute=False))
+            except Exception as e:
+                print(f"    {red('transplant failed')} on {c.path}: {e}")
+        ok = [t for t in results if t.verdict.startswith("VERIFIED")]
+        print(f"    {len(copies)} cop{'y' if len(copies)==1 else 'ies'}, "
+              f"{green(str(len(ok)))} verified of {len([c for c in copies if not c.patched])} stale")
+
+        body = report_markdown(target, copies, results, executed=False)
+        if a.dry_run:
+            print(dim("    ── would post ──"))
+            for line in body.splitlines()[:8]:
+                print(dim(f"    {line}"))
+            print()
+            continue
+        try:
+            _gh_api(["-X", "POST", f"repos/{a.repo}/issues/{num}/comments",
+                     "-f", f"body={body}"])
+            _gh_api(["-X", "POST", f"repos/{a.repo}/issues/{num}/labels",
+                     "-f", f"labels[]={a.answered_label}"])
+            print(f"    {green('answered')}\n")
+        except Exception as e:
+            print(f"    {red('could not post')}: {e}\n")
+
+
 def _slug(s: str) -> str:
     """A filesystem-safe name. An absolute checkout path would otherwise become a
     directory called __private__tmp__..., which tells a reader nothing."""
@@ -779,6 +846,16 @@ def main(argv=None):
     pbp.add_argument("--dry-run", dest="dry_run", action="store_true",
                      help="verify but write no artifacts")
     pbp.set_defaults(fn=cmd_backport)
+
+    pq = sub.add_parser("queue", help="answer the repair requests the website filed (private queue repo)")
+    pq.add_argument("--repo", required=True, help="the PRIVATE queue repo whose issues hold the requests")
+    pq.add_argument("--label", default="repair-request", help="label the site files requests under")
+    pq.add_argument("--answered-label", dest="answered_label", default="answered",
+                    help="label added once a request has been answered")
+    pq.add_argument("--limit", type=int, default=10, help="how many to answer this run")
+    pq.add_argument("--dry-run", dest="dry_run", action="store_true",
+                    help="print what would be posted, post nothing")
+    pq.set_defaults(fn=cmd_queue)
 
     pm = sub.add_parser("mine", help="mine + validate candidate fix markers across copied C libraries (local git)")
     pm.add_argument("--libs", default=None, help="libraries JSON (defaults to examples/benchmark/libs.json)")
